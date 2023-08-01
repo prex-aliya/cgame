@@ -1,6 +1,6 @@
+a.out
+
 .DS_Store
 .idea
 *.log
 tmp/
-
-./*.out
