@@ -3,4 +3,4 @@
 *.log
 tmp/
 
-a.out
+./a.out
