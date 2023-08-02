@@ -1,28 +1,17 @@
 #include <signal.h>
-#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <termios.h>
 #include <unistd.h>
+#include "config.h"
+
+/* NOTE: recursave functions are not part of the standard c language */
 
 struct termios old_tio, new_tio;
-const bool debug=true;
-unsigned int height=7;
-unsigned int width=15;
-int frames=1;
+/* Unessisary */
+//unsigned int blocky=0;
+//unsigned int block=0;
 
-unsigned int playerx=8;
-unsigned int playery=4;
-bool playermove=true;
-bool playerview=true;
-
-unsigned int blocky=0;
-unsigned int block=0;
-
-unsigned int level=0;
-
-unsigned short int mapx=20;
-unsigned short int mapy=10;
 
 
 
@@ -76,7 +65,7 @@ void debuginfo() {
     printf("\n(%d, %d)",playerx, playery);
     printf("\npmove: %d, pview: %d",playermove, playerview);
     printf("\nxmap: %d, ymap: %d",mapx, mapy);
-    printf("\nframes: %d",frames);
+    printf("\nframes: %d, level: %d",frames, level+1);
 }
 void render(unsigned short int map[mapy][mapx]) {
     register unsigned int x,y;
@@ -97,7 +86,10 @@ void render(unsigned short int map[mapy][mapx]) {
                 printf("\e[1;47m  \e[0;0m");
             }
             else if (x/4 == 7 && y/4 == 3 && playerview == true) { /* render player */
-                int sy = y-((y/4)*4); if (sy == 3) {printf("\e[40m        \e[0m");} else if (sy == 2) {
+                int sy = y-((y/4)*4);
+                if (sy == 3) {
+                    printf("\e[40m        \e[0m");
+                } else if (sy == 2) {
                     printf("\e[40m        \e[0m");
                 } else if (sy == 2) {
                     printf("\e[43m        \e[0m");
@@ -107,10 +99,26 @@ void render(unsigned short int map[mapy][mapx]) {
                 x = x+3;
             }
             else {
-                int sx = x-((x/4)*4);
-                int sy = y-((y/4)*4);
-                if ((x/4)+(playerx-7) > mapx-1 || (y/4)+(playery-4) > mapy-1) { /* rendrers out mountians  */
-                    printf("\e[0m\x1b[38;5;28m~~\e[0m");
+                short int sx = x-((x/4)*4);
+                short int sy = y-((y/4)*4);
+                if ((x/4)+(playerx-7) > mapx-1 || (y/4)+(playery-4) > mapy-1) {
+                    /* Rendrers Out Mountians Per Level */
+                    // TODO: split to seperate functions
+                    if (level == 0) {
+                        printf("\e[0m\x1b[38;5;28m~~\e[0m");
+                    } else if (level == 1) {
+                        short int outy = (y/4)+(playery-7);
+                        short int outx = (x/4)+(playerx-7);
+                        if (outy <= -1 && outy >= -3) {
+                            printf("\e[0m\x1b[38;5;28m~~\e[0m");
+                        } else if ( outy == 1) {
+                            printf("\e[43m%c%c", dirt[sy][sx], dirt[sy][sx]);
+                        } else if ( outx == 19 && !(outy <= 0)) {
+                            printf("\e[43m%c%c", dirt[sy][sx], dirt[sy][sx]);
+                        } else {
+                            printf("\e[42;33m.*\e[0m");
+                        }
+                    }
                 } else if (map[(y/4)+(playery-4)][(x/4)+(playerx-7)] == 1) { /* renders green */
                     printf("\e[43m%c%c", dirt[sy][sx], dirt[sy][sx]);
                 } else if (map[(y/4)+(playery-4)][(x/4)+(playerx-7)] == 0) { /* renders yellow */
@@ -155,7 +163,7 @@ void level1(){
         {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
         {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1},
         {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1}
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1}
     };
 
     mapx = 19;
