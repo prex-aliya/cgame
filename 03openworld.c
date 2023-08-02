@@ -6,7 +6,7 @@
 #include <unistd.h>
 
 struct termios old_tio, new_tio;
-const bool debug=false;
+const bool debug=true;
 unsigned int height=7;
 unsigned int width=15;
 int frames=1;
@@ -72,6 +72,12 @@ int getinput() {
     return value;
 }
 
+void debuginfo() {
+    printf("\n(%d, %d)",playerx, playery);
+    printf("\npmove: %d, pview: %d",playermove, playerview);
+    printf("\nxmap: %d, ymap: %d",mapx, mapy);
+    printf("\nframes: %d",frames);
+}
 void render(unsigned short int map[mapy][mapx]) {
     register unsigned int x,y;
 
@@ -125,35 +131,17 @@ void render(unsigned short int map[mapy][mapx]) {
     if (level == 0) { printf("\e[0mGO TO CAR"); /* Level 1 Objective */
     } else if (level == 1) {printf("\e[0mGO TO THE TOWER"); } /* Level 2 Objective */
     /* DEBUG */
-    if (debug == true) {
-        printf("\n(%d, %d)",playerx, playery);
-        printf("\npmove: %d, pview: %d",playermove, playerview);
-        printf("\nxmap: %d, ymap: %d",mapx, mapy);
-        printf("\nframes: %d",frames);
-    }
-    printf("\n");
+    if (debug == true) { debuginfo(); }
+    fputs("\n", stdout);
 }
 
-void gameplay() {
-    unsigned short int firstmap[10][20]={
-        {2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2},
-        {2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-        {0,0,0,0,0,0,0,3,3,3,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
-    };
-
-    unsigned short int towerbase[19][19]={
+void level1(){
+    unsigned short int map[19][19]={
         {2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2},
         {2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2},
         {2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2},
         {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+        {1,1,1,1,1,1,3,3,3,1,1,1,1,1,1,1,1,1,1},
         {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
         {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
         {0,0,0,0,0,4,4,4,4,4,4,4,4,4,0,0,0,0,0},
@@ -170,8 +158,87 @@ void gameplay() {
         {0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1}
     };
 
+    mapx = 19;
+    mapy = 19;
+
+    if (playermove == true) {
+        render(map);
+    } else {
+        map[4][6] = 1;
+        map[4][7] = 1;
+        map[4][8] = 1;
+
+        fputs("\033c", stdout);
+        level = 1;
+        render(map);
+        for (short int i=-1; i!=7; i++) {
+            map[4][i-1] = 1;
+            map[4][i]   = 3;
+            map[4][i+1] = 3;
+            map[4][i+2] = 3;
+
+            usleep(2000); /* sleep in microseconds */
+            fputs("\033c", stdout);
+            render(map);
+
+            sleep(1);
+        }
+
+        playerx = 7;
+        playery = 6;
+        playermove = true;
+        playerview = true;
+    }
+}
+void level0(){
+    unsigned short int map[10][20]={
+        {2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2},
+        {2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+        {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+        {0,0,0,0,0,0,0,3,3,3,0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
+    };
+
+    if (playermove == false) {
+        /* TODO: fix screen tearing */
+        map[4][7]  = 0;
+        map[4][10] = 3;
+
+        fputs("\033c", stdout);
+        render(map);
+
+        sleep(1);
+        map[4][8]  = 0;
+        map[4][9]  = 0;
+        map[4][10] = 0;
+
+        for (short int i=9; i<17; i++) {
+            map[3][i-1] = 1;
+            map[3][i]   = 3;
+            map[3][i+1] = 3;
+            map[3][i+2] = 3;
+
+            usleep(2000); /* sleep in microseconds */
+            fputs("\033c", stdout);
+            render(map);
+
+            sleep(1);
+        }
+
+        level1();
+    } else {
+        render(map);
+    }
+}
+void gameplay() {
     fputs("\033c", stdout);
-    render(firstmap);
+    //render(firstmap);
+    level0();
 
     do {
         int input = getinput();
@@ -208,62 +275,17 @@ void gameplay() {
 
         if (playermove == false) { /* This is for the begining scene */
             if (level == 0) {
-                /* TODO: fix screen tearing */
-                firstmap[4][7]  = 0;
-                firstmap[4][10] = 3;
-
-                fputs("\033c", stdout);
-                render(firstmap);
-
-                sleep(1);
-                firstmap[4][8]  = 0;
-                firstmap[4][9]  = 0;
-                firstmap[4][10] = 0;
-
-                for (short int i=9; i<17; i++) {
-                    firstmap[3][i-1] = 1;
-                    firstmap[3][i]   = 3;
-                    firstmap[3][i+1] = 3;
-                    firstmap[3][i+2] = 3;
-
-                    usleep(2000); /* sleep in microseconds */
-                    fputs("\033c", stdout);
-                    render(firstmap);
-
-                    sleep(1);
-                }
-
-                fputs("\033c", stdout);
-                mapx = 19;
-                mapy = 19;
-                level = 1;
-                render(towerbase);
-                for (short int i=-1; i!=7; i++) {
-                    towerbase[4][i-1] = 1;
-                    towerbase[4][i]   = 3;
-                    towerbase[4][i+1] = 3;
-                    towerbase[4][i+2] = 3;
-
-                    usleep(2000); /* sleep in microseconds */
-                    fputs("\033c", stdout);
-                    render(towerbase);
-
-                    sleep(1);
-                }
-
-                playerx = 7;
-                playery = 6;
-                playermove = true;
-                playerview = true;
             }
         }
 
         fputs("\033c", stdout);
 
         if (level == 0) {
-            render(firstmap);
+            //render(firstmap);
+            level0();
         } else {
-            render(towerbase);
+            level1();
+            //render(towerbase);
         }
         usleep(2000); /* Sleep in microseconds */
         frames = frames+1;
@@ -328,8 +350,8 @@ void menu() {
     } while (select != 0);
 }
 
-
 int main() {
+    // https://stackoverflow.com/questions/448944/c-non-blocking-keyboard-input
 
     tcgetattr(STDIN_FILENO, &old_tio);
     new_tio = old_tio;
