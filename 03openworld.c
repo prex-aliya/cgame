@@ -9,6 +9,7 @@ struct termios old_tio, new_tio;
 const bool debug=true;
 unsigned int height=7;
 unsigned int width=15;
+int frames=1;
 
 unsigned int playerx=8;
 unsigned int playery=4;
@@ -90,10 +91,7 @@ void render(unsigned short int map[mapy][mapx]) {
                 printf("\e[1;47m  \e[0;0m");
             }
             else if (x/4 == 7 && y/4 == 3 && playerview == true) { /* render player */
-                int sy = y-((y/4)*4);
-                if (sy == 3) {
-                    printf("\e[40m        \e[0m");
-                } else if (sy == 2) {
+                int sy = y-((y/4)*4); if (sy == 3) {printf("\e[40m        \e[0m");} else if (sy == 2) {
                     printf("\e[40m        \e[0m");
                 } else if (sy == 2) {
                     printf("\e[43m        \e[0m");
@@ -113,8 +111,10 @@ void render(unsigned short int map[mapy][mapx]) {
                     printf("\e[42m%c%c", dirt[sy][sx], dirt[sy][sx]);
                 } else if (map[(y/4)+(playery-4)][(x/4)+(playerx-7)] == 2) { /* renders trees */
                     printf("\x1b[38;5;28m^^");
-                } else if (map[(y/4)+(playery-4)][(x/4)+(playerx-7)] == 3) { /* renders pure blue*/
+                } else if (map[(y/4)+(playery-4)][(x/4)+(playerx-7)] == 3) { /* renders pure blue */
                     printf("\e[44m  ");
+                } else if (map[(y/4)+(playery-4)][(x/4)+(playerx-7)] == 4) { /* renders pure grey */
+                    printf("\e[40m!!");
                 } else {
                     printf("  ");
                 }
@@ -122,12 +122,14 @@ void render(unsigned short int map[mapy][mapx]) {
         }
         printf("\e[0m\n");
     }
-    printf("\e[0mGO TO CAR");
+    if (level == 0) { printf("\e[0mGO TO CAR"); /* Level 1 Objective */
+    } else if (level == 1) {printf("\e[0mGO TO THE TOWER"); } /* Level 2 Objective */
     /* DEBUG */
     if (debug == true) {
         printf("\n(%d, %d)",playerx, playery);
         printf("\npmove: %d, pview: %d",playermove, playerview);
         printf("\nxmap: %d, ymap: %d",mapx, mapy);
+        printf("\nframes: %d",frames);
     }
     printf("\n");
 }
@@ -151,36 +153,60 @@ void gameplay() {
         {2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2},
         {2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2},
         {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {1,1,1,1,1,1,3,3,3,1,1,1,1,1,1,1,1,1,1},
+        {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
         {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
         {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,4,4,4,4,4,4,4,4,4,0,0,0,0,0},
+        {0,0,0,0,0,4,0,0,0,0,0,0,0,4,0,0,0,0,0},
+        {0,0,0,0,0,4,0,4,4,4,4,4,0,4,0,0,0,0,0},
+        {0,0,0,0,0,4,0,0,4,3,4,0,0,4,0,0,0,0,0},
+        {0,0,0,0,0,4,0,0,4,4,4,0,0,4,0,0,0,0,0},
+        {0,0,0,0,0,4,0,0,0,4,0,0,0,4,0,0,0,0,0},
+        {0,0,0,0,0,4,0,0,0,0,0,0,0,4,0,0,0,0,0},
+        {0,0,0,0,0,4,4,4,4,4,4,4,4,4,0,0,0,0,0},
         {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1}
     };
 
     fputs("\033c", stdout);
     render(firstmap);
 
     do {
-        /* Map Spacific */
-        if (playerx == 8 && playery == 5) {
+        int input = getinput();
+        printf("%d", input);
+
+
+        if (input == 1) {
+            if (playery <= 1) {
+            } else {
+                playery--;
+            }
+        } else if (input == 2) {
+            if (playery >= mapy-1+1) {
+            } else {
+                playery++;
+            }
+        } else if (input == 3) {
+            if (playerx >= mapx-1) {
+            } else {
+                playerx++;
+            }
+        } else if (input == 4) {
+            if (playerx <= 0) {
+            } else {
+                playerx--;
+            }
+        }
+
+        /* First Level Spacific */
+        if (playerx == 8 && playery == 5 && level == 0) {
             playermove = false;
             playerview = false;
         }
 
-        int input = getinput();
-        printf("%d", input);
-        if (playermove == false) { /* This is for the begining scene **/
+        if (playermove == false) { /* This is for the begining scene */
             if (level == 0) {
                 /* TODO: fix screen tearing */
                 firstmap[4][7]  = 0;
@@ -205,17 +231,6 @@ void gameplay() {
                     render(firstmap);
 
                     sleep(1);
-                } for (short int i=-1; i!=6; i++) {
-                    firstmap[3][i-1] = 1;
-                    firstmap[3][i]   = 3;
-                    firstmap[3][i+1] = 3;
-                    firstmap[3][i+2] = 3;
-
-                    usleep(2000); /* sleep in microseconds */
-                    fputs("\033c", stdout);
-                    render(firstmap);
-
-                    sleep(1);
                 }
 
                 fputs("\033c", stdout);
@@ -223,33 +238,23 @@ void gameplay() {
                 mapy = 19;
                 level = 1;
                 render(towerbase);
+                for (short int i=-1; i!=7; i++) {
+                    towerbase[4][i-1] = 1;
+                    towerbase[4][i]   = 3;
+                    towerbase[4][i+1] = 3;
+                    towerbase[4][i+2] = 3;
+
+                    usleep(2000); /* sleep in microseconds */
+                    fputs("\033c", stdout);
+                    render(towerbase);
+
+                    sleep(1);
+                }
 
                 playerx = 7;
                 playery = 6;
                 playermove = true;
                 playerview = true;
-            }
-        } else {
-            if (input == 1) {
-                if (playery <= 1) {
-                } else {
-                    playery--;
-                }
-            } else if (input == 2) {
-                if (playery >= mapy-1+1) {
-                } else {
-                    playery++;
-                }
-            } else if (input == 3) {
-                if (playerx >= mapx-1) {
-                } else {
-                    playerx++;
-                }
-            } else if (input == 4) {
-                if (playerx <= 0) {
-                } else {
-                    playerx--;
-                }
             }
         }
 
@@ -261,6 +266,7 @@ void gameplay() {
             render(towerbase);
         }
         usleep(2000); /* Sleep in microseconds */
+        frames = frames+1;
     } while (1);
 }
 
