@@ -6,7 +6,7 @@
 #include <unistd.h>
 
 struct termios old_tio, new_tio;
-const bool debug=true;
+const bool debug=false;
 unsigned int height=7;
 unsigned int width=15;
 int frames=1;
