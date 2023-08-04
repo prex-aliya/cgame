@@ -18,6 +18,12 @@ void signal_handler(int sig) {
 }
 
 int getinput() {
+    /* NOTE:
+     * 1 = up
+     * 2 = down
+     * 3 = right
+     * 4 = left
+       */
     unsigned short int value;
     char input = getchar();
     if (input == 27) {
