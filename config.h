@@ -4,8 +4,8 @@
 #include <stdlib.h> /* For NULL */
 
 const bool debug=true;
-unsigned int level=0;
-unsigned short int frames=1;
+unsigned short int level=1;
+unsigned int frames=1;
 
 unsigned int height=7;
 unsigned int width=15;
@@ -17,9 +17,8 @@ unsigned int playery=4;
 bool playermove=true;
 bool playerview=true;
 
-
-int kbhit()
-{
+/* Magic !?! */
+int kbhit() {
     struct timeval tv = { 0L, 0L };
     fd_set fds;
     FD_ZERO(&fds);
