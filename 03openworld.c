@@ -207,6 +207,12 @@ void level0(){
         {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
     };
 
+    /* First Level Spacific */
+    if (playerx == 8 && playery == 5) {
+        playermove = false;
+        playerview = false;
+    }
+
     if (playermove == false) {
         /* TODO: fix screen tearing */
         map[4][7]  = 0;
@@ -275,23 +281,13 @@ void gameplay() {
                 playerx--;
             }
         }
-
-        /* First Level Spacific */
-        if (playerx == 8 && playery == 5 && level == 0) {
-            playermove = false;
-            playerview = false;
+        while (!kbhit()) {
+            fputs("\033c", stdout);
+            runlevel();
+            usleep(2000); /* Sleep in microseconds */
+            frames+=1;
         }
 
-        if (playermove == false) { /* This is for the begining scene */
-            if (level == 0) {
-            }
-        }
-
-        fputs("\033c", stdout);
-
-        runlevel();
-        usleep(2000); /* Sleep in microseconds */
-        frames = frames+1;
     } while (1);
 }
 
