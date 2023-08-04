@@ -11,11 +11,7 @@ struct termios old_tio, new_tio;
 
 
 int sig_caught=0;
-void signal_handler(int sig) {
-    if (sig == SIGINT) {
-        sig_caught=1;
-    }
-}
+void signal_handler(int sig) {if (sig == SIGINT) {sig_caught=1;}}
 
 int getinput() {
     /* NOTE:
@@ -193,10 +189,12 @@ void level1(){
             sleep(1);
         }
 
-        playerx = 7;
-        playery = 6;
-        playermove = true;
-        playerview = true;
+        mapx=16;
+        mapy=16;
+        playerx=7;
+        playery=6;
+        playermove=true;
+        playerview=true;
     }
 }
 void level0(){
