@@ -4,7 +4,7 @@
 #include <stdlib.h> /* For NULL */
 
 const bool debug=true;
-unsigned int level=1;
+unsigned int level=0;
 unsigned short int frames=1;
 
 unsigned int height=7;
