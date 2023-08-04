@@ -6,12 +6,7 @@
 #include "config.h"
 
 /* NOTE: recursave functions are not part of the standard c language */
-
 struct termios old_tio, new_tio;
-/* Unessisary */
-//unsigned int blocky=0;
-//unsigned int block=0;
-
 
 
 
@@ -243,6 +238,13 @@ void level0(){
         render(map);
     }
 }
+void runlevel() {
+    /* Run the Level */
+    if (level == 0) {
+    } else {
+        level1();
+    }
+}
 void gameplay() {
     fputs("\033c", stdout);
     //render(firstmap);
@@ -256,8 +258,7 @@ void gameplay() {
         if (input == 1) {
             if (playery <= 1) {
             } else {
-                playery--;
-            }
+                playery--;}
         } else if (input == 2) {
             if (playery >= mapy-1+1) {
             } else {
@@ -288,13 +289,7 @@ void gameplay() {
 
         fputs("\033c", stdout);
 
-        if (level == 0) {
-            //render(firstmap);
-            level0();
-        } else {
-            level1();
-            //render(towerbase);
-        }
+        runlevel();
         usleep(2000); /* Sleep in microseconds */
         frames = frames+1;
     } while (1);
