@@ -9,7 +9,6 @@
 struct termios old_tio, new_tio;
 
 
-
 int sig_caught=0;
 void signal_handler(int sig) {if (sig == SIGINT) {sig_caught=1;}}
 
@@ -140,6 +139,65 @@ void render(unsigned short int map[mapy][mapx]) {
     fputs("\n", stdout);
 }
 
+void printmenu(unsigned short int select) {
+    register unsigned int i,e;
+    fputs("\033c", stdout); /* Clear Screen */
+    printf("\n\n");
+    for (e=1; e<=4; e++) {
+    /* https://www.theurbanpenguin.com/4184-2/
+     * reset color */
+        printf("\033[0;0m");
+        for (i=0; i<width/4; i++) {
+            printf("    ");
+        }
+        if (select == e) {
+            printf("\033[1;37m>");
+        }
+        if (e == 1) {
+            printf("START\033[0;0m\n");
+        } else if (e == 2) {
+            printf("SAVE\033[0;0m\n");
+        } else if (e == 3) {
+            printf("SETTINGS\033[0;0m\n");
+        } else if (e == 4) {
+            printf("QUIT\033[0;0m\n");
+        } else {}
+    }
+}
+void menu() {
+    unsigned short int select = 1;
+
+    do {
+        printmenu(select);
+        fflush(stdout);
+        int input = getinput();
+
+        if (input == 1) {
+            if (select <= 1) {
+            } else {
+                select--;
+            }
+        } else if (input == 2) {
+            if (select >= 4) {
+            } else {
+                select++;
+            }
+        } else if (input == 0) {
+            break;
+        } else if (input == 5) {
+            if (select == 1) {
+                break;
+            } else if (select == 4) {
+                break;
+            }
+        } else { }
+    fputs("\033c", stdout); /* Clear Screen */
+    usleep(2000);
+
+    } while (select != 0);
+}
+
+void level2(){}
 void level1(){
     unsigned short int map[19][19]={
         {2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2},
@@ -165,6 +223,14 @@ void level1(){
 
     mapx = 19;
     mapy = 19;
+
+    if (playerx == 9 && playery == 12) {
+        playermove = false;
+        playerview = false;
+        level += 1;
+        level2();
+        return;
+    }
 
     if (playermove == true) {
         render(map);
@@ -252,8 +318,10 @@ void runlevel() {
     /* Run the Level */
     if (level == 0) {
         level0();
-    } else {
+    } else if (level == 1) {
         level1();
+    } else {
+        level2();
     }
 }
 void gameplay() {
@@ -285,7 +353,10 @@ void gameplay() {
             } else {
                 playerx--;
             }
+        } else if (input == 6) {
+            menu();
         }
+
         while (!kbhit()) {
             usleep(50000); /* Sleep in microseconds */
             fputs("\033c", stdout);
@@ -294,64 +365,6 @@ void gameplay() {
         }
 
     } while (1);
-}
-
-void printmenu(unsigned short int select) {
-    register unsigned int i,e;
-    fputs("\033c", stdout); /* Clear Screen */
-    printf("\n\n");
-    for (e=1; e<=4; e++) {
-    /* https://www.theurbanpenguin.com/4184-2/
-     * reset color */
-        printf("\033[0;0m");
-        for (i=0; i<width/4; i++) {
-            printf("    ");
-        }
-        if (select == e) {
-            printf("\033[1;37m>");
-        }
-        if (e == 1) {
-            printf("START\033[0;0m\n");
-        } else if (e == 2) {
-            printf("SAVE\033[0;0m\n");
-        } else if (e == 3) {
-            printf("SETTINGS\033[0;0m\n");
-        } else if (e == 4) {
-            printf("QUIT\033[0;0m\n");
-        } else {}
-    }
-}
-
-void menu() {
-    unsigned short int select = 1;
-
-    do {
-        printmenu(select);
-        int input = getinput();
-        if (input == 1) {
-            if (select <= 1) {
-            } else {
-                select--;
-            }
-        } else if (input == 2) {
-            if (select >= 4) {
-            } else {
-                select++;
-            }
-        } else if (input == 0) {
-            break;
-        } else if (input == 5) {
-            if (select == 1) {
-                gameplay();
-                break;
-            } else if (select == 4) {
-                break;
-            }
-        } else { }
-    fputs("\033c", stdout); /* Clear Screen */
-    usleep(2000);
-
-    } while (select != 0);
 }
 
 int main() {
@@ -363,6 +376,7 @@ int main() {
     tcsetattr(STDIN_FILENO, TCSANOW, &new_tio);
 
     menu();
+    gameplay();
 
     /* EXIT */
     tcsetattr(STDIN_FILENO, TCSANOW, &old_tio); /* restore former settings */
