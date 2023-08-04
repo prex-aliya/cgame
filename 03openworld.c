@@ -114,10 +114,10 @@ void render(unsigned short int map[mapy][mapx]) {
                             printf("\e[42;33m.*\e[0m");
                         }
                     }
-                } else if (map[(y/4)+(playery-4)][(x/4)+(playerx-7)] == 1) { /* renders green */
-                    printf("\e[43m%c%c", dirt[sy][sx], dirt[sy][sx]);
                 } else if (map[(y/4)+(playery-4)][(x/4)+(playerx-7)] == 0) { /* renders yellow */
                     printf("\e[42m%c%c", dirt[sy][sx], dirt[sy][sx]);
+                } else if (map[(y/4)+(playery-4)][(x/4)+(playerx-7)] == 1) { /* renders green */
+                    printf("\e[43m%c%c", dirt[sy][sx], dirt[sy][sx]);
                 } else if (map[(y/4)+(playery-4)][(x/4)+(playerx-7)] == 2) { /* renders trees */
                     printf("\x1b[38;5;28m^^");
                 } else if (map[(y/4)+(playery-4)][(x/4)+(playerx-7)] == 3) { /* renders pure blue */
