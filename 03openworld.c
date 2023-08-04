@@ -253,6 +253,7 @@ void level0(){
 void runlevel() {
     /* Run the Level */
     if (level == 0) {
+        level0();
     } else {
         level1();
     }
@@ -288,9 +289,9 @@ void gameplay() {
             }
         }
         while (!kbhit()) {
+            usleep(50000); /* Sleep in microseconds */
             fputs("\033c", stdout);
             runlevel();
-            usleep(2000); /* Sleep in microseconds */
             frames+=1;
         }
 
