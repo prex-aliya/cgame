@@ -11,6 +11,10 @@ struct termios old_tio, new_tio;
 
 int sig_caught=0;
 void signal_handler(int sig) {if (sig == SIGINT) {sig_caught=1;}}
+void finish() {
+    tcsetattr(STDIN_FILENO, TCSANOW, &old_tio); /* restore former settings */
+    exit(0);
+}
 
 int getinput() {
     /* NOTE:
@@ -76,10 +80,10 @@ void render(unsigned short int map[mapy][mapx]) {
     for (y=0; y<4*height; y++) {
         for (x=0; x<4*width; x++) {
             if (y == 0 || y == 4*height-1 ) { /* render the boarder first */
-                printf("\e[1;47m        \e[0;37m");
-                x = x + 3;
+                printf( BWHITE "               ");
+                x = x + 7;
             } else if (x == 0 || x == 4*width-1) { /* rendering first means on top */
-                printf("\e[1;47m  \e[0;0m");
+                printf( BWHITE "  " RESET);
             }
             else if (x/4 == 7 && y/4 == 3 && playerview == true) { /* render player */
                 int sy = y-((y/4)*4);
@@ -188,7 +192,7 @@ void menu() {
             if (select == 1) {
                 break;
             } else if (select == 4) {
-                break;
+                finish();
             }
         } else { }
     fputs("\033c", stdout); /* Clear Screen */
@@ -379,6 +383,5 @@ int main() {
     gameplay();
 
     /* EXIT */
-    tcsetattr(STDIN_FILENO, TCSANOW, &old_tio); /* restore former settings */
-    return 0;
+    finish();
 }

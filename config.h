@@ -3,8 +3,29 @@
 #include <sys/select.h>
 #include <stdlib.h> /* For NULL */
 
+/* ISO C99 Requires space after micro name */
+#define RED      "\x1b[31m"
+#define GREEN    "\x1b[32m"
+#define YELLOW   "\x1b[33m"
+#define BLUE     "\x1b[34m"
+#define MAGENTA  "\x1b[35m"
+#define CYAN     "\x1b[36m"
+#define WHITE    "\x1b[37m"
+
+#define BBLACK   "\X1b[41m"
+#define BRED     "\x1b[41m"
+#define BGREEN   "\x1b[42m"
+#define BYELLOW  "\x1b[43m"
+#define BBLUE    "\x1b[44m"
+#define BMAGENTA "\x1b[45m"
+#define BCYAN    "\x1b[46m"
+#define BWHITE   "\x1b[47m"
+
+#define RESET    "\x1b[0m"
+
+
 const bool debug=true;
-unsigned short int level=1;
+unsigned short int level=0;
 unsigned int frames=1;
 
 unsigned int height=7;
@@ -16,6 +37,7 @@ unsigned int playerx=8;
 unsigned int playery=4;
 bool playermove=true;
 bool playerview=true;
+
 
 /* Magic !?! */
 int kbhit() {
