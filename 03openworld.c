@@ -80,21 +80,17 @@ void render(unsigned short int map[mapy][mapx]) {
     for (y=0; y<4*height; y++) {
         for (x=0; x<4*width; x++) {
             if (y == 0 || y == 4*height-1 ) { /* render the boarder first */
-                printf( BWHITE "               ");
+                printf(BWHITE "               ");
                 x = x + 7;
             } else if (x == 0 || x == 4*width-1) { /* rendering first means on top */
-                printf( BWHITE "  " RESET);
+                printf(BWHITE "  " RESET);
             }
             else if (x/4 == 7 && y/4 == 3 && playerview == true) { /* render player */
                 int sy = y-((y/4)*4);
-                if (sy == 3) {
-                    printf("\e[40m        \e[0m");
-                } else if (sy == 2) {
-                    printf("\e[40m        \e[0m");
-                } else if (sy == 2) {
-                    printf("\e[43m        \e[0m");
+                if (sy < 2) {
+                    printf(BBLACK "        " RESET);
                 } else {
-                    printf("\e[1;41m        \e[0m");
+                    printf(BRED "        " RESET);
                 }
                 x = x+3;
             }
@@ -105,7 +101,16 @@ void render(unsigned short int map[mapy][mapx]) {
                     /* Rendrers Out Mountians Per Level */
                     // TODO: split to seperate functions
                     if (level == 0) {
-                        printf("\e[0m\x1b[38;5;28m~~\e[0m");
+                        short int outy = (y/4)+(playery-7);
+                        short int outx = (x/4)+(playerx-7);
+                        if (outy == 0 && outx >= -1) {
+                            printf(BYELLOW "  \e[0m");
+                        } else if (outx > 16 && outy >= -1) {
+                            printf(BGREEN YELLOW ".*\e[0m");
+                        }
+                        else {
+                            printf("\e[0m\x1b[38;5;28m~~\e[0m");
+                        }
                     } else if (level == 1) {
                         short int outy = (y/4)+(playery-7);
                         short int outx = (x/4)+(playerx-7);
@@ -271,9 +276,9 @@ void level0(){
     unsigned short int map[10][20]={
         {2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2},
         {2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
         {0,0,0,0,0,0,0,3,3,3,0,0,0,0,0,0,0,0,0,0},
+        {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
         {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
         {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
         {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
@@ -282,23 +287,23 @@ void level0(){
     };
 
     /* First Level Spacific */
-    if (playerx == 8 && playery == 5) {
+    if (playerx == 8 && playery == 3) {
         playermove = false;
         playerview = false;
     }
 
     if (playermove == false) {
         /* TODO: fix screen tearing */
-        map[4][7]  = 0;
-        map[4][10] = 3;
+        map[2][7]  = 0;
+        map[2][10] = 3;
 
         fputs("\033c", stdout);
         render(map);
 
         sleep(1);
-        map[4][8]  = 0;
-        map[4][9]  = 0;
-        map[4][10] = 0;
+        map[2][8]  = 0;
+        map[2][9]  = 0;
+        map[2][10] = 0;
 
         for (short int i=9; i<17; i++) {
             map[3][i-1] = 1;

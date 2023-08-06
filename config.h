@@ -3,7 +3,11 @@
 #include <sys/select.h>
 #include <stdlib.h> /* For NULL */
 
+/* TODO: test if their is a way to have theis macros be right next to each other
+ * without a space
+  */
 /* ISO C99 Requires space after micro name */
+#define BLACK    "\x1b[30m"
 #define RED      "\x1b[31m"
 #define GREEN    "\x1b[32m"
 #define YELLOW   "\x1b[33m"
@@ -12,7 +16,7 @@
 #define CYAN     "\x1b[36m"
 #define WHITE    "\x1b[37m"
 
-#define BBLACK   "\X1b[41m"
+#define BBLACK   "\x1b[40m"
 #define BRED     "\x1b[41m"
 #define BGREEN   "\x1b[42m"
 #define BYELLOW  "\x1b[43m"
