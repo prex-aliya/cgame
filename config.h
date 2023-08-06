@@ -4,7 +4,7 @@
 #include <stdlib.h> /* For NULL */
 
 /* TODO: test if their is a way to have theis macros be right next to each other
- * without a space
+ * without a space, so "START BBLACK GREEN END" would be, \x1b[40;32m"
   */
 /* ISO C99 Requires space after micro name */
 #define BLACK    "\x1b[30m"
