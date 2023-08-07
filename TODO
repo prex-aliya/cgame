@@ -1,1 +1,6 @@
-TODO: Fix Screen Taring\nTODO: make a makefile\nTODO: Change Boarder
+- [25%]
+  - [X] TODO: Fix Screen Taringg
+  - [ ] TODO: Make a Makefile
+  - [ ] TODO: Change Border
+  - [ ] TODO: Expand the Sprite System
+    - [ ] Use Bit maps for each sprite.
