@@ -106,43 +106,43 @@ void render(unsigned short int map[mapy][mapx]) {
                         if (outy == 0 && outx >= -1) {
                             printf(BYELLOW "  \e[0m");
                         } else if (outx > 16 && outy >= -1) {
-                            printf(BGREEN YELLOW ".*\e[0m");
+                            printf(BGREEN YELLOW ".*" RESET);
                         }
                         else {
-                            printf("\e[0m\x1b[38;5;28m~~\e[0m");
+                            printf(RESET "\x1b[38;5;28m~~" RESET);
                         }
                     } else if (level == 1) {
                         short int outy = (y/4)+(playery-7);
                         short int outx = (x/4)+(playerx-7);
                         if (outy <= -1 && outy >= -3) {
-                            printf("\e[0m\x1b[38;5;28m~~\e[0m");
+                            printf(RESET "\x1b[38;5;28m~~" RESET);
                         } else if ( outy == 1) {
-                            printf("\e[43m%c%c", dirt[sy][sx], dirt[sy][sx]);
+                            printf(BYELLOW "%c%c", dirt[sy][sx], dirt[sy][sx]);
                         } else if ( outx == 19 && !(outy <= 0)) {
-                            printf("\e[43m%c%c", dirt[sy][sx], dirt[sy][sx]);
+                            printf(BYELLOW "%c%c", dirt[sy][sx], dirt[sy][sx]);
                         } else {
-                            printf("\e[42;33m.*\e[0m");
+                            printf(BGREEN YELLOW ".*" RESET);
                         }
                     }
                 } else if (map[(y/4)+(playery-4)][(x/4)+(playerx-7)] == 0) { /* renders yellow */
-                    printf("\e[42m%c%c", dirt[sy][sx], dirt[sy][sx]);
+                    printf(BGREEN "%c%c", dirt[sy][sx], dirt[sy][sx]);
                 } else if (map[(y/4)+(playery-4)][(x/4)+(playerx-7)] == 1) { /* renders green */
-                    printf("\e[43m%c%c", dirt[sy][sx], dirt[sy][sx]);
+                    printf(BYELLOW "%c%c", dirt[sy][sx], dirt[sy][sx]);
                 } else if (map[(y/4)+(playery-4)][(x/4)+(playerx-7)] == 2) { /* renders trees */
                     printf("\x1b[38;5;28m^^");
                 } else if (map[(y/4)+(playery-4)][(x/4)+(playerx-7)] == 3) { /* renders pure blue */
-                    printf("\e[44m  ");
+                    printf(BBLUE "  ");
                 } else if (map[(y/4)+(playery-4)][(x/4)+(playerx-7)] == 4) { /* renders pure grey */
-                    printf("\e[40m!!");
+                    printf(BBLACK "!!");
                 } else {
                     printf("  ");
                 }
             }
         }
-        printf("\e[0m\n");
+        printf(RESET "\n");
     }
-    if (level == 0) { printf("\e[0mGO TO CAR"); /* Level 1 Objective */
-    } else if (level == 1) {printf("\e[0mGO TO THE TOWER"); } /* Level 2 Objective */
+    if (level == 0) { printf(RESET "GO TO CAR"); /* Level 1 Objective */
+    } else if (level == 1) {printf(RESET "GO TO THE TOWER"); } /* Level 2 Objective */
     /* DEBUG */
     if (debug == true) { debuginfo(); }
     fputs("\n", stdout);
