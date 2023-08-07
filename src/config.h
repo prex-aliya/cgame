@@ -4,7 +4,7 @@
 #include <stdlib.h> /* For NULL */
 
 /* TODO: test if their is a way to have theis macros be right next to each other
- * without a space, so "START BBLACK GREEN END" would be, \x1b[40;32m", wonder.
+ * without a space, so "START BBLACK GREEN END" would be, \x1b[40;32m", I wonder.
   */
 /* ISO C99 Requires space after micro name */
 #define BLACK    "\x1b[30m"
@@ -27,7 +27,6 @@
 
 #define RESET    "\x1b[0m"
 
-
 const bool debug=true;
 unsigned short int level=0;
 unsigned int frames=1;
@@ -43,11 +42,19 @@ bool playermove=true;
 bool playerview=true;
 
 
-/* Magic !?! */
+/* Magic */
 int kbhit() {
     struct timeval tv = { 0L, 0L };
     fd_set fds;
     FD_ZERO(&fds);
     FD_SET(0, &fds);
     return select(1, &fds, NULL, NULL, &tv) > 0;
+}
+
+/* https://stackoverflow.com/questions/5488377/converting-an-integer-to-binary-in-c
+   More Magic */
+unsigned int_to_binary(unsigned k) {
+    if (k == 0) return 0;
+    if (k == 1) return 1;                       /* optional */
+    return (k % 2) + 10 * int_to_binary(k / 2);
 }
