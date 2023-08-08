@@ -31,15 +31,18 @@ const bool debug=true;
 unsigned short int level=0;
 unsigned int frames=1;
 
-unsigned int height=7;
-unsigned int width=15;
+const unsigned int height=7;
+const unsigned int width=15;
 unsigned short int mapx=20;
 unsigned short int mapy=10;
 
-unsigned int playerx=8;
-unsigned int playery=4;
+unsigned short int playerx=8;
+unsigned short int playery=4;
 bool playermove=true;
 bool playerview=true;
+
+unsigned short int slept=0; /* How Many Deaths */
+unsigned short int sloc[8][3]; /* Death Location */
 
 
 /* Magic */
