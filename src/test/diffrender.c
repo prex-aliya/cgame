@@ -27,15 +27,17 @@ bool line(register int x, register int y){
   int y1 = 28;
 
   /* https://zingl.github.io/bresenham.html */
+  // TODO HOW ? WORKS
   int dx = abs(x1-x0), sx = x0<x1 ? 1 : -1;
   int dy = -abs(y1-y0), sy = y0<y1 ? 1 : -1;
   int err = dx+dy, e2;
 
   for(;;) {
 
-    if (x0<x && x0%6 == d && y0==y && x0< (x*-1)+60) return true;
-
-    if (((x0==x+5 || x0==x) && y0==y) || (x0==(x*-1)+60 && y0==y) || (x0==(x*-1)+65 && y0==y)) return true;
+    if (y0==y) {
+      if (x0<x && x0%6 == d && x0< (x*-1)+60) return true;
+      if (((x0==(x*-1)+65 || x0==(x*-1)+64) || (x0==x+4 || x0==x+5) || x0==(x*-1)+60 || x0==x)) return true;
+    }
     if (x0==x1 && y0==y1) break;
 
     e2 = 2*err;
