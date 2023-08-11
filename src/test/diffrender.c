@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <stdbool.h>
 #include <math.h>
 #include <time.h>
@@ -16,31 +17,32 @@ unsigned int height=7;
 unsigned int width=15;
 //double incline=-1;
 double incline=-1;
-double d;
+double d = 1;
 
 bool line(register int x, register int y){
-  
-  int x1 = 0;
-  int y1 = 0;
-  int x2 = 27;
-  int y2 = 15;
 
-  int m = 2 * (y2-y1);
-  int error = m-(x2-x1);
-  for (int nx = x1, ny = y1; nx <= x2; nx++ ) {
+  int x0 = 25;
+  int y0 = 0;
+  int x1 = 10;
+  int y1 = 28;
 
-    if (nx == x && ny == y) {
-      return true;
-    }
+  /* https://zingl.github.io/bresenham.html */
+  int dx = abs(x1-x0), sx = x0<x1 ? 1 : -1;
+  int dy = -abs(y1-y0), sy = y0<y1 ? 1 : -1;
+  int err = dx+dy, e2;
 
-    error += m;
+  for(;;) {
 
-    if (error >= 0) {
-      ny++;
-      error -= 2*(x2-x1);
-    }
+    if (x0<x && x0%6 == d && y0==y && x0< (x*-1)+60) return true;
+
+    if (((x0==x+5 || x0==x) && y0==y) || (x0==(x*-1)+60 && y0==y) || (x0==(x*-1)+65 && y0==y)) return true;
+    if (x0==x1 && y0==y1) break;
+
+    e2 = 2*err;
+    if (e2 >= dy) {err += dy; x0 += sx; }
+    if (e2 <= dx) {err += dx; y0 += sy; }
   }
-  return false;
+ return false;
 }
 
 void render() {
@@ -53,7 +55,6 @@ void render() {
     for (x=0; x<width; x++) {
       register unsigned short int z;
       for (z=0; z<4; z++) {
-
         if (line((x*4)+z, y) == true) {
           printf("  ");
         } else {
@@ -68,13 +69,16 @@ void render() {
 }
 
 int main() {
-  while (1) {
+  do {
     render();
     incline-=0.1;
-    printf("\t%f", d);
-    d+=1;
+    if (d<=1) d=5;
+    else d-=1;
+
+    sleep(1);
     if (d>10000) {
-      return 1;
+      return 0;
     }
-  }
+
+  } while (1);
 }
