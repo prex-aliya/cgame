@@ -67,6 +67,33 @@ void debuginfo() {
     printf("\nxmap: %d, ymap: %d",mapx, mapy);
     printf("\nframes: %d, level: %d",frames, level+1);
 }
+void level_spacific_rendering(int x, int y) {
+    if (level == 0) {
+        short int outy = (y/4)+(playery-7);
+        short int outx = (x/4)+(playerx-7);
+        if (outy == 0 && outx >= -1) {
+            printf(BYELLOW "  \e[0m");
+        } else if (outx > 16 && outy >= -1) {
+            printf(BGREEN YELLOW ".*" RESET);
+        } else {
+            printf(RESET "\x1b[38;5;28m~~" RESET);
+        }
+    } else if (level == 1) {
+        short int outy = (y/4)+(playery-7);
+        short int outx = (x/4)+(playerx-7);
+        if (outy <= -1 && outy >= -3) {
+            printf(RESET "\x1b[38;5;28m~~" RESET);
+        } else if ( outy == 1) {
+            printf(BYELLOW "  ");
+        } else if ( outx == 19 && !(outy <= 0)) {
+            printf(BYELLOW "  ");
+        } else {
+            printf(BGREEN YELLOW "/*" RESET);
+        }
+    } else {
+        printf(RESET "\x1b[38;5;28m~~" RESET);
+    }
+}
 void render(unsigned short int map[mapy][mapx]) {
     register unsigned int x,y,z;
 
@@ -96,31 +123,7 @@ void render(unsigned short int map[mapy][mapx]) {
                     if (x+(playerx-7) > mapx-1 || (y/4)+(playery-4) > mapy-1) {
                         /* Rendrers Out Mountians Per Level */
                         // TODO: split to seperate functions
-                        if (level == 0) {
-                            short int outy = (y/4)+(playery-7);
-                            short int outx = (realx/4)+(playerx-7);
-                            if (outy == 0 && outx >= -1) {
-                                printf(BYELLOW "  \e[0m");
-                            } else if (outx > 16 && outy >= -1) {
-                                printf(BGREEN YELLOW ".*" RESET);
-                            } else {
-                                printf(RESET "\x1b[38;5;28m~~" RESET);
-                            }
-                        } else if (level == 1) {
-                            short int outy = (y/4)+(playery-7);
-                            short int outx = (realx/4)+(playerx-7);
-                            if (outy <= -1 && outy >= -3) {
-                                printf(RESET "\x1b[38;5;28m~~" RESET);
-                            } else if ( outy == 1) {
-                                printf(BYELLOW "%c%c", dirt[sy][sx], dirt[sy][sx]);
-                            } else if ( outx == 19 && !(outy <= 0)) {
-                                printf(BYELLOW "%c%c", dirt[sy][sx], dirt[sy][sx]);
-                            } else {
-                                printf(BGREEN YELLOW "/*" RESET);
-                            }
-                        } else {
-                            printf(RESET "\x1b[38;5;28m~~" RESET);
-                        }
+                        level_spacific_rendering(realx, y);
                     } else {
                         switch (map[(y/4)+(playery-4)][(realx/4)+(playerx-7)]) {
                             case 0: /* Print Green **/
