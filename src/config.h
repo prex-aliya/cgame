@@ -27,6 +27,10 @@
 
 #define RESET    "\x1b[0m"
 
+#define BOARDER_CHAR "                                                                                                                            "
+#define PTOP printf(BWHITE BOARDER_CHAR RESET); \
+  fputs("\n", stdout);
+
 const bool debug=true;
 unsigned short int level=0;
 unsigned int frames=1;
