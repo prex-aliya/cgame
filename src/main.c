@@ -121,20 +121,28 @@ void render(unsigned short int map[mapy][mapx]) {
                         } else {
                             printf(RESET "\x1b[38;5;28m~~" RESET);
                         }
-                    } else if (map[(y/4)+(playery-4)][(realx/4)+(playerx-7)] == 3) { /* renders pure blue */
-                        printf(RESET BBLUE "  ");
-                    } else if (map[(y/4)+(playery-4)][(realx/4)+(playerx-7)] == 0) { /* renders yellow */
-                        printf(BGREEN "%c%c", dirt[sy][sx], dirt[sy][sx]);
-                    } else if (map[(y/4)+(playery-4)][(realx/4)+(playerx-7)] == 1) { /* renders green */
-                        printf(BYELLOW "%c%c", dirt[sy][sx], dirt[sy][sx]);
-                    } else if (map[(y/4)+(playery-4)][(realx/4)+(playerx-7)] == 2) { /* renders trees */
-                        printf("\x1b[38;5;28m^^");
-                    } else if (map[(y/4)+(playery-4)][(realx/4)+(playerx-7)] == 4) { /* renders pure grey */
-                        printf(BBLACK "!!");
-                    } else if (map[(y/4)+(playery-4)][(realx/4)+(playerx-7)] == 5) { /* renders pure grey */
-                        printf(BRED "!!");
                     } else {
-                        printf("XX");
+                        switch (map[(y/4)+(playery-4)][(realx/4)+(playerx-7)]) {
+                            case 0: /* Print Green **/
+                                printf(BGREEN "%c%c", dirt[sy][sx], dirt[sy][sx]);
+                                break;
+                            case 1: /* Print Yellow */
+                                printf(BYELLOW "%c%c", dirt[sy][sx], dirt[sy][sx]);
+                                break;
+                            case 2: /* Print Trees */
+                                printf("\x1b[38;5;28m^^");
+                                break;
+                            case 3: /* Print Blue */
+                                printf(RESET BBLUE "  ");
+                                break;
+                            case 4: /* Print Black */
+                                printf(BBLACK "||");
+                                break;
+                            case 5: /* Print Red */
+                                printf(BRED "!!");
+                                break;
+                            default: printf("XX");
+                        }
                     }
                 }
             }
