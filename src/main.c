@@ -87,13 +87,13 @@ void render(unsigned short int map[mapy][mapx]) {
                 } else { printf(BRED "        " RESET); }
             }
             else {
-                register int zx = x*4;
+                register int zx = x*4; /* X for z, precomputed before loop */
                 for (z=0; z<4; z++) {
                     short int realx = zx+z;
                     short int sx = realx-((realx/4)*4);
                     short int sy = y-((y/4)*4);
 
-                    if ((realx/4)+(playerx-7) > mapx-1 || (y/4)+(playery-4) > mapy-1) {
+                    if (x+(playerx-7) > mapx-1 || (y/4)+(playery-4) > mapy-1) {
                         /* Rendrers Out Mountians Per Level */
                         // TODO: split to seperate functions
                         if (level == 0) {
