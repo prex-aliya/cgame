@@ -80,6 +80,7 @@ void render(unsigned short int map[mapy][mapx]) {
     PTOP
 
     for (y=0; y<4*height; y++) {
+        printf(BWHITE "  " RESET); /* PRINT white boarder */
         for (x=0; x<width; x++) {
             if (x == 7 && y/4 == 3 && playerview == true) { /* render player */
                 if (y-((y/4)*4) < 2) { printf(BBLACK "        " RESET);
@@ -117,26 +118,28 @@ void render(unsigned short int map[mapy][mapx]) {
                             } else {
                                 printf(BGREEN YELLOW "/*" RESET);
                             }
+                        } else {
+                            printf(RESET "\x1b[38;5;28m~~" RESET);
                         }
+                    } else if (map[(y/4)+(playery-4)][(realx/4)+(playerx-7)] == 3) { /* renders pure blue */
+                        printf(RESET BBLUE "  ");
                     } else if (map[(y/4)+(playery-4)][(realx/4)+(playerx-7)] == 0) { /* renders yellow */
                         printf(BGREEN "%c%c", dirt[sy][sx], dirt[sy][sx]);
                     } else if (map[(y/4)+(playery-4)][(realx/4)+(playerx-7)] == 1) { /* renders green */
                         printf(BYELLOW "%c%c", dirt[sy][sx], dirt[sy][sx]);
                     } else if (map[(y/4)+(playery-4)][(realx/4)+(playerx-7)] == 2) { /* renders trees */
                         printf("\x1b[38;5;28m^^");
-                    } else if (map[(y/4)+(playery-4)][(x/4)+(playerx-7)] == 3) { /* renders pure blue */
-                        printf(BBLUE "  ");
                     } else if (map[(y/4)+(playery-4)][(realx/4)+(playerx-7)] == 4) { /* renders pure grey */
                         printf(BBLACK "!!");
                     } else if (map[(y/4)+(playery-4)][(realx/4)+(playerx-7)] == 5) { /* renders pure grey */
                         printf(BRED "!!");
                     } else {
-                        printf("  ");
+                        printf("XX");
                     }
                 }
             }
         }
-        printf(RESET "\n");
+        printf(BWHITE "  \n" RESET);
     }
 
     PTOP

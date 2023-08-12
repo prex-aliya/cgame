@@ -46,7 +46,6 @@ bool playermove=true;
 bool playerview=true;
 
 unsigned short int slept=0; /* How Many Deaths */
-unsigned short int sloc[8][3]; /* Death Location */
 
 
 /* Magic */
