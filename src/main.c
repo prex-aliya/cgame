@@ -94,7 +94,50 @@ void td_lvl_ren(int x, int y) {
         printf(RESET "\x1b[38;5;28m~~" RESET);
     }
 }
-//void td_ren(unsigned short int map[mapy][mapx]) {}
+void td_ren(unsigned int x, unsigned int y, unsigned short int map[mapy][mapx]) {
+    if (x == 7 && y/4 == 3 && playerview == true) { /* render player */
+        if (y-((y/4)*4) < 2) { printf(BBLACK "        " RESET);
+        } else { printf(BRED "        " RESET); }
+    }
+    else {
+
+        register int z, zx = x*4;  /* zx for z, precomputed before loop */
+        for (z=0; z<4; z++) {
+            short int realx = zx+z;
+            //short int sx = realx-((realx/4)*4);
+            //short int sy = y-((y/4)*4);
+
+            if (x+(playerx-7) > mapx-1 || (y/4)+(playery-4) > mapy-1) {
+                /* Rendrers Out Mountians Per Level */
+                // TODO: split to seperate functions
+                td_lvl_ren(realx, y);
+            } else {
+                switch (map[(y/4)+(playery-4)][(realx/4)+(playerx-7)]) {
+                case 0: /* Print Green **/
+                    //printf(BGREEN "%c%c", dirt[sy][sx], dirt[sy][sx]);
+                    printf(BGREEN "  ");
+                    break;
+                case 1: /* Print Yellow */
+                    printf(BYELLOW "  ");
+                    break;
+                case 2: /* Print Trees */
+                    printf("\x1b[38;5;28m^^");
+                    break;
+                case 3: /* Print Blue */
+                    printf(RESET BBLUE "  ");
+                    break;
+                case 4: /* Print Black */
+                    printf(BBLACK "||");
+                    break;
+                case 5: /* Print Red */
+                    printf(BRED "!!");
+                    break;
+                default: printf("XX"); /* Somethings Wrong */
+                }
+            }
+        }
+    }
+}
 void render(unsigned short int map[mapy][mapx]) {
     /* if tile like is needed */
     //unsigned char dirt[4][4]={
@@ -103,8 +146,8 @@ void render(unsigned short int map[mapy][mapx]) {
     //    {"    "},
     //    {"    "}
     //};
-
     register unsigned int x,y;
+
 
     PTOP
 
@@ -112,48 +155,7 @@ void render(unsigned short int map[mapy][mapx]) {
         printf(BWHITE "  " RESET); /* PRINT white boarder */
         for (x=0; x<width; x++) {
 
-            if (x == 7 && y/4 == 3 && playerview == true) { /* render player */
-                if (y-((y/4)*4) < 2) { printf(BBLACK "        " RESET);
-                } else { printf(BRED "        " RESET); }
-            }
-            else {
-
-                register int z, zx = x*4;  /* zx for z, precomputed before loop */
-                for (z=0; z<4; z++) {
-                    short int realx = zx+z;
-                    //short int sx = realx-((realx/4)*4);
-                    //short int sy = y-((y/4)*4);
-
-                    if (x+(playerx-7) > mapx-1 || (y/4)+(playery-4) > mapy-1) {
-                        /* Rendrers Out Mountians Per Level */
-                        // TODO: split to seperate functions
-                        td_lvl_ren(realx, y);
-                    } else {
-                        switch (map[(y/4)+(playery-4)][(realx/4)+(playerx-7)]) {
-                        case 0: /* Print Green **/
-                            //printf(BGREEN "%c%c", dirt[sy][sx], dirt[sy][sx]);
-                            printf(BGREEN "  ");
-                            break;
-                        case 1: /* Print Yellow */
-                            printf(BYELLOW "  ");
-                            break;
-                        case 2: /* Print Trees */
-                            printf("\x1b[38;5;28m^^");
-                            break;
-                        case 3: /* Print Blue */
-                            printf(RESET BBLUE "  ");
-                            break;
-                        case 4: /* Print Black */
-                            printf(BBLACK "||");
-                            break;
-                        case 5: /* Print Red */
-                            printf(BRED "!!");
-                            break;
-                        default: printf("XX"); /* Somethings Wrong */
-                        }
-                    }
-                }
-            }
+            td_ren(x,y,map);
 
         }
         printf(BWHITE "  \n" RESET);
