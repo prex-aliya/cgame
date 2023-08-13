@@ -67,7 +67,7 @@ void debuginfo() {
     printf("\nxmap: %d, ymap: %d",mapx, mapy);
     printf("\nframes: %d, level: %d",frames, level+1);
 }
-void level_spacific_rendering(int x, int y) {
+void td_lvl_ren(int x, int y) {
     if (level == 0) {
         short int outy = (y/4)+(playery-7);
         short int outx = (x/4)+(playerx-7);
@@ -94,64 +94,71 @@ void level_spacific_rendering(int x, int y) {
         printf(RESET "\x1b[38;5;28m~~" RESET);
     }
 }
+//void td_ren(unsigned short int map[mapy][mapx]) {}
 void render(unsigned short int map[mapy][mapx]) {
-    register unsigned int x,y,z;
+    /* if tile like is needed */
+    //unsigned char dirt[4][4]={
+    //    {"    "},
+    //    {"    "},
+    //    {"    "},
+    //    {"    "}
+    //};
 
-    unsigned char dirt[4][4]={
-        {"    "},
-        {"    "},
-        {"    "},
-        {"    "}
-    };
+    register unsigned int x,y;
 
     PTOP
 
     for (y=0; y<4*height; y++) {
         printf(BWHITE "  " RESET); /* PRINT white boarder */
         for (x=0; x<width; x++) {
+
             if (x == 7 && y/4 == 3 && playerview == true) { /* render player */
                 if (y-((y/4)*4) < 2) { printf(BBLACK "        " RESET);
                 } else { printf(BRED "        " RESET); }
             }
             else {
-                register int zx = x*4; /* X for z, precomputed before loop */
+
+                register int z, zx = x*4;  /* zx for z, precomputed before loop */
                 for (z=0; z<4; z++) {
                     short int realx = zx+z;
-                    short int sx = realx-((realx/4)*4);
-                    short int sy = y-((y/4)*4);
+                    //short int sx = realx-((realx/4)*4);
+                    //short int sy = y-((y/4)*4);
 
                     if (x+(playerx-7) > mapx-1 || (y/4)+(playery-4) > mapy-1) {
                         /* Rendrers Out Mountians Per Level */
                         // TODO: split to seperate functions
-                        level_spacific_rendering(realx, y);
+                        td_lvl_ren(realx, y);
                     } else {
                         switch (map[(y/4)+(playery-4)][(realx/4)+(playerx-7)]) {
-                            case 0: /* Print Green **/
-                                printf(BGREEN "%c%c", dirt[sy][sx], dirt[sy][sx]);
-                                break;
-                            case 1: /* Print Yellow */
-                                printf(BYELLOW "%c%c", dirt[sy][sx], dirt[sy][sx]);
-                                break;
-                            case 2: /* Print Trees */
-                                printf("\x1b[38;5;28m^^");
-                                break;
-                            case 3: /* Print Blue */
-                                printf(RESET BBLUE "  ");
-                                break;
-                            case 4: /* Print Black */
-                                printf(BBLACK "||");
-                                break;
-                            case 5: /* Print Red */
-                                printf(BRED "!!");
-                                break;
-                            default: printf("XX");
+                        case 0: /* Print Green **/
+                            //printf(BGREEN "%c%c", dirt[sy][sx], dirt[sy][sx]);
+                            printf(BGREEN "  ");
+                            break;
+                        case 1: /* Print Yellow */
+                            printf(BYELLOW "  ");
+                            break;
+                        case 2: /* Print Trees */
+                            printf("\x1b[38;5;28m^^");
+                            break;
+                        case 3: /* Print Blue */
+                            printf(RESET BBLUE "  ");
+                            break;
+                        case 4: /* Print Black */
+                            printf(BBLACK "||");
+                            break;
+                        case 5: /* Print Red */
+                            printf(BRED "!!");
+                            break;
+                        default: printf("XX"); /* Somethings Wrong */
                         }
                     }
                 }
             }
+
         }
         printf(BWHITE "  \n" RESET);
     }
+
 
     PTOP
     printf(RESET "\n");
@@ -220,6 +227,7 @@ void menu() {
 
     } while (select != 0);
 }
+
 
 void level2(){}
 void level1(){
@@ -384,6 +392,10 @@ void gameplay() {
                 playerx--;
             }
         } else if (input == 6) {
+            /*
+            * TODO: Change new function escape, deturmines which during what
+            * level/stage
+            */
             menu();
         }
 
