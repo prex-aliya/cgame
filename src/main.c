@@ -8,13 +8,13 @@
 /* NOTE: recursave functions are not part of the standard c language */
 struct termios old_tio, new_tio;
 
-
 int sig_caught=0;
 void signal_handler(int sig) {if (sig == SIGINT) {sig_caught=1;}}
 void finish() {
     tcsetattr(STDIN_FILENO, TCSANOW, &old_tio); /* restore former settings */
     exit(0);
 }
+
 
 int getinput() {
     /* NOTE:
@@ -226,7 +226,14 @@ void menu() {
 }
 
 
-void level2(){}
+void level2(){
+    /* TODO
+     * We change to fromtfacing view, we see side to side
+     * A and S are side - side
+     * W up, R down
+     */
+
+}
 void level1(){
     unsigned short int map[19][19]={
         {2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2},
