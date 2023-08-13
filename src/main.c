@@ -3,11 +3,10 @@
 #include <stdlib.h>
 #include <termios.h>
 #include <unistd.h>
-#include "config.h"
+#include "config.h" /* Configuration */
 
 /* NOTE: recursave functions are not part of the standard c language */
 struct termios old_tio, new_tio;
-
 
 int sig_caught=0;
 void signal_handler(int sig) {if (sig == SIGINT) {sig_caught=1;}}
@@ -68,27 +67,28 @@ void debuginfo() {
     printf("\nframes: %d, level: %d",frames, level+1);
 }
 void td_lvl_ren(int x, int y) {
+    #define BIT(c) c c c c
     if (level == 0) {
         short int outy = (y/4)+(playery-7);
-        short int outx = (x/4)+(playerx-7);
+        short int outx = (x)+(playerx-7);
         if (outy == 0 && outx >= -1) {
-            printf(BYELLOW "  \e[0m");
+            printf(BYELLOW BIT("  ") RESET);
         } else if (outx > 16 && outy >= -1) {
-            printf(BGREEN YELLOW ".*" RESET);
+            printf(BGREEN YELLOW BIT(".*") RESET);
         } else {
-            printf(RESET "\x1b[38;5;28m~~" RESET);
+            printf(RESET "\x1b[38;5;28m" BIT("~~") RESET);
         }
     } else if (level == 1) {
         short int outy = (y/4)+(playery-7);
         short int outx = (x/4)+(playerx-7);
         if (outy <= -1 && outy >= -3) {
-            printf(RESET "\x1b[38;5;28m~~" RESET);
+            printf(RESET "\x1b[38;5;28m" BIT("~~") RESET);
         } else if ( outy == 1) {
-            printf(BYELLOW "  ");
+            printf(BYELLOW BIT("  "));
         } else if ( outx == 19 && !(outy <= 0)) {
-            printf(BYELLOW "  ");
+            printf(BYELLOW BIT("  "));
         } else {
-            printf(BGREEN YELLOW "/*" RESET);
+            printf(BGREEN YELLOW BIT("/*") RESET);
         }
     } else {
         printf(RESET "\x1b[38;5;28m~~" RESET);
@@ -98,23 +98,16 @@ void td_ren(unsigned int x, unsigned int y, unsigned short int map[mapy][mapx]) 
     if (x == 7 && y/4 == 3 && playerview == true) { /* render player */
         if (y-((y/4)*4) < 2) { printf(BBLACK "        " RESET);
         } else { printf(BRED "        " RESET); }
-    }
-    else {
-
+    } else if (x+(playerx-7) > mapx-1 || (y/4)+(playery-4) > mapy-1) {
+                td_lvl_ren(x, y); /* Rendrers Out Mountians Per Level */
+    } else {
         register int z, zx = x*4;  /* zx for z, precomputed before loop */
         for (z=0; z<4; z++) {
             short int realx = zx+z;
-            //short int sx = realx-((realx/4)*4);
-            //short int sy = y-((y/4)*4);
 
-            if (x+(playerx-7) > mapx-1 || (y/4)+(playery-4) > mapy-1) {
-                /* Rendrers Out Mountians Per Level */
-                // TODO: split to seperate functions
-                td_lvl_ren(realx, y);
-            } else {
+            {
                 switch (map[(y/4)+(playery-4)][(realx/4)+(playerx-7)]) {
                 case 0: /* Print Green **/
-                    //printf(BGREEN "%c%c", dirt[sy][sx], dirt[sy][sx]);
                     printf(BGREEN "  ");
                     break;
                 case 1: /* Print Yellow */
@@ -138,14 +131,7 @@ void td_ren(unsigned int x, unsigned int y, unsigned short int map[mapy][mapx]) 
         }
     }
 }
-void render(unsigned short int map[mapy][mapx]) {
-    /* if tile like is needed */
-    //unsigned char dirt[4][4]={
-    //    {"    "},
-    //    {"    "},
-    //    {"    "},
-    //    {"    "}
-    //};
+void render(unsigned short int info[mapy][mapx]) {
     register unsigned int x,y;
 
 
@@ -155,20 +141,18 @@ void render(unsigned short int map[mapy][mapx]) {
         printf(BWHITE "  " RESET); /* PRINT white boarder */
         for (x=0; x<width; x++) {
 
-            td_ren(x,y,map);
+            td_ren(x,y,info);
 
         }
         printf(BWHITE "  \n" RESET);
     }
 
-
     PTOP
     printf(RESET "\n");
 
-    if (level == 0) { printf(RESET "GO TO CAR"); /* Level 1 Objective */
-    } else if (level == 1) {printf(RESET "GO TO THE TOWER"); } /* Level 2 Objective */
-    /* DEBUG */
-    if (debug == true) { debuginfo(); }
+    if (level == 0) printf(RESET "GO TO CAR"); /* Level 1 Objective */
+    else if (level == 1) printf(RESET "GO TO THE TOWER"); /* Level 2 Objective */
+    if (debug == true) { debuginfo(); } /* DEBUG */
     fputs("\n", stdout);
 }
 
@@ -409,7 +393,7 @@ void gameplay() {
         }
 
     } while (1);
-}
+
 
 int main() {
     // https://stackoverflow.com/questions/448944/c-non-blocking-keyboard-input
