@@ -47,6 +47,8 @@ bool playerview=true;
 
 unsigned short int slept=0; /* How Many Deaths */
 
+/* */
+
 
 /* Magic */
 int kbhit() {
