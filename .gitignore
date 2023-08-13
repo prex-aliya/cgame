@@ -1,6 +1,6 @@
-*.out
-.*/*.out
-.*/.*/*.out
+*.out*
+.*/*.out*
+.*/.*/*.out*
 
 .DS_Store
 .idea
