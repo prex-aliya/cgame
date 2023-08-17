@@ -212,7 +212,7 @@ void menu() {
             }
         } else if (input == 0) {
             break;
-        } else if (input == 5) {
+        } else if (input == 5 || input == 3) {
             if (select == 1) {
                 break;
             } else if (select == 4) {
@@ -220,9 +220,8 @@ void menu() {
             }
         } else { }
 
-    fputs("\033c", stdout); /* Clear Screen */
-    usleep(10000);
-
+        fputs("\033c", stdout); /* Clear Screen */
+        usleep(50000);
     } while (select != 0);
 }
 
