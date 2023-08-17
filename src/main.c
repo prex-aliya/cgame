@@ -8,13 +8,13 @@
 /* NOTE: recursave functions are not part of the standard c language */
 struct termios old_tio, new_tio;
 
+
 int sig_caught=0;
 void signal_handler(int sig) {if (sig == SIGINT) {sig_caught=1;}}
 void finish() {
     tcsetattr(STDIN_FILENO, TCSANOW, &old_tio); /* restore former settings */
     exit(0);
 }
-
 
 int getinput() {
     /* NOTE:
@@ -71,9 +71,9 @@ void td_lvl_ren(int x, int y) {
     #define BIT(c) c c c c
     if (level == 0) {
         short int outy = (y/4)+(playery-7);
-        short int outx = x+(playerx-7);
+        short int outx = (x/4)+(playerx-7);
         if (outy == 0 && outx >= -1) {
-            printf(RESET BYELLOW BIT("  ") RESET);
+            printf(BYELLOW BIT("  ") RESET);
         } else if (outx > 16 && outy >= -1) {
             printf(BGREEN YELLOW BIT(".*") RESET);
         } else {
@@ -83,9 +83,9 @@ void td_lvl_ren(int x, int y) {
         short int outy = (y/4)+(playery-7);
         short int outx = (x/4)+(playerx-7);
         if (outy <= -1 && outy >= -3) {
-            printf(RESET "\x1b[38;5;28m" BIT("~~") RESET);
+            printf(RESET "\x1b[38;5;28m~~" RESET);
         } else if ( outy == 1) {
-            printf(BYELLOW BIT("  ") RESET);
+            printf(BYELLOW "  ");
         } else if ( outx == 19 && !(outy <= 0)) {
             printf(BYELLOW BIT("  ") RESET);
         } else {
@@ -100,17 +100,19 @@ void td_ren(unsigned int x, unsigned int y, unsigned short int map[mapy][mapx]) 
         if (y-((y/4)*4) < 2) { printf(BBLACK "        " RESET);
         } else { printf(BRED "        " RESET); }
     } else if (x+(playerx-7) > mapx-1 || (y/4)+(playery-4) > mapy-1) {
-                /* Rendrers Out Mountians Per Level */
-                // TODO: split to seperate functions
-                td_lvl_ren(x, y);
+        /* Rendrers Out Mountians Per Level */
+        // TODO: split to seperate functions
+        td_lvl_ren(x, y);
     } else {
 
         register int z, zx = x*4;  /* zx for z, precomputed before loop */
         for (z=0; z<4; z++) {
             short int realx = zx+z;
+            //short int sx = realx-((realx/4)*4);
+            //short int sy = y-((y/4)*4);
             switch (map[(y/4)+(playery-4)][(realx/4)+(playerx-7)]) {
             case 0: /* Print Green **/
-                    //printf(BGREEN "%c%c", dirt[sy][sx], dirt[sy][sx]);
+                //printf(BGREEN "%c%c", dirt[sy][sx], dirt[sy][sx]);
                 printf(BGREEN "  ");
                 break;
             case 1: /* Print Yellow */
@@ -193,47 +195,48 @@ void printmenu(unsigned short int select) {
     }
 }
 void menu() {
-    unsigned short int select = 1;
+    unsigned short int sel = 1;
+    unsigned short int seln = 1;
+    int input;
 
     do {
-        printmenu(select);
+        /* TODO: if no change in select then donot print again */
+
+        printmenu(sel);
         fflush(stdout);
-        int input = getinput();
+        input = getinput();
 
         if (input == 1) {
-            if (select <= 1) {
+            if (sel <= 1) {
             } else {
-                select--;
+                sel--;
+                sound(1);
             }
         } else if (input == 2) {
-            if (select >= 4) {
+            if (sel >= 4) {
             } else {
-                select++;
+                sel++;
+                sound(1);
             }
         } else if (input == 0) {
             break;
         } else if (input == 5 || input == 3) {
-            if (select == 1) {
+            sound(1);
+            if (sel == 1) {
                 break;
-            } else if (select == 4) {
+            } else if (sel == 4) {
                 finish();
             }
         } else { }
-
         fputs("\033c", stdout); /* Clear Screen */
-        usleep(50000);
+        usleep(MENU_UPDATE_SPEED);
+
+
     } while (select != 0);
 }
 
 
-void level2(){
-    /* TODO
-     * We change to frontfacing view, we see side to side
-     * A and S are side - side
-     * W up, R down
-     */
-
-}
+void level2(){}
 void level1(){
     unsigned short int map[19][19]={
         {2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2},
@@ -261,7 +264,7 @@ void level1(){
     mapy = 19;
 
     if (playerx == 9 && playery == 12) {
-        sound(1);
+        sound(2);
         playermove = false;
         playerview = false;
         level += 1;
@@ -322,7 +325,7 @@ void level0(){
 
     /* First Level Spacific */
     if (playerx == 8 && playery == 3) {
-        sound(1);
+        sound(2);
         playermove = false;
         playerview = false;
     }
@@ -406,7 +409,7 @@ void gameplay() {
         }
 
         while (!kbhit()) {
-            usleep(50000); /* Sleep in microseconds */
+            usleep(GAME_UPDATE_SPEED); /* Sleep in microseconds */
             fputs("\033c", stdout);
             runlevel();
             frames+=1;
@@ -424,11 +427,6 @@ int main() {
     new_tio = old_tio;
     new_tio.c_lflag &= (~ICANON & ~ECHO);
     tcsetattr(STDIN_FILENO, TCSANOW, &new_tio);
-
-    /*  ABOUT menu()
-     * Has to be on other side of termios block to allow key grabbing without
-     * Having to input return.
-     */
 
     menu();
     gameplay();

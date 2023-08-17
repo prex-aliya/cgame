@@ -28,9 +28,16 @@
 
 #define RESET    "\x1b[0m"
 
+
 #define BOARDER_CHAR "                                                                                                                            "
 #define PTOP printf(BWHITE BOARDER_CHAR RESET); \
   fputs("\n", stdout);
+
+
+#define GAME_UPDATE_SPEED 50000
+#define MENU_UPDATE_SPEED 70000
+
+
 
 const bool debug=true;
 unsigned short int level=0;
