@@ -2,10 +2,11 @@
 #include <termios.h>
 #include <sys/select.h>
 #include <stdlib.h> /* For NULL */
+#include "../lib/paex_sine.c"
 
 /* TODO: test if their is a way to have theis macros be right next to each other
  * without a space, so "START BBLACK GREEN END" would be, \x1b[40;32m", I wonder.
-  */
+ */
 /* ISO C99 Requires space after micro name */
 #define BLACK    "\x1b[30m"
 #define RED      "\x1b[31m"
@@ -47,8 +48,6 @@ bool playerview=true;
 
 unsigned short int slept=0; /* How Many Deaths */
 
-/* */
-
 
 /* Magic */
 int kbhit() {
@@ -66,3 +65,7 @@ int kbhit() {
 //    if (k == 1) return 1;                       /* optional */
 //    return (k % 2) + 10 * int_to_binary(k / 2);
 //}
+
+void sound(int time) {
+    sine(time*100);
+}

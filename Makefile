@@ -5,23 +5,32 @@ VERSION = 0.0.0
 # Semantic Versioning: https://semver.org/
 
 # Compiler and Linker
-CC = cc
-BINNAME = a.out
-BIND = ./bin/$(BINNAME)
+CC		= gcc
 
-SRCD = ./src
-SRC = $(SRCD)/main.c
+OPP		= -Ofast
+SOUND	= -lrt -lm -pthread
+CFLAGS	= $(OPP) $(SOUND)
+
+LIBD	= ./lib
+LIB		= $(LIBD)/libportaudio.a
+
+BINNAME	= a.out
+BIND	= ./bin/$(BINNAME)
+
+SRCD	= ./src
+SRC		= $(SRCD)/main.c
 
 all: compile options
+	@echo Finished
 
 options:
-	@echo build options
+	@echo Build Options: audio$()
 
 test: compile
 	$(BIND)
 
-compile:
-	$(CC) -o $(BIND) $(SRC)
+compile: $(SRCD)
+	$(CC) $(CFLAGS) $(SRC) $(LIB) -o $(BIND)
 
 install: all compile
 	@echo "No install option at this moment"

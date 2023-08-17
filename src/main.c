@@ -219,8 +219,9 @@ void menu() {
                 finish();
             }
         } else { }
+
     fputs("\033c", stdout); /* Clear Screen */
-    usleep(2000);
+    usleep(10000);
 
     } while (select != 0);
 }
@@ -261,6 +262,7 @@ void level1(){
     mapy = 19;
 
     if (playerx == 9 && playery == 12) {
+        sound(1);
         playermove = false;
         playerview = false;
         level += 1;
@@ -321,6 +323,7 @@ void level0(){
 
     /* First Level Spacific */
     if (playerx == 8 && playery == 3) {
+        sound(1);
         playermove = false;
         playerview = false;
     }
@@ -416,10 +419,17 @@ void gameplay() {
 int main() {
     // https://stackoverflow.com/questions/448944/c-non-blocking-keyboard-input
 
+    sound(1);
+
     tcgetattr(STDIN_FILENO, &old_tio);
     new_tio = old_tio;
     new_tio.c_lflag &= (~ICANON & ~ECHO);
     tcsetattr(STDIN_FILENO, TCSANOW, &new_tio);
+
+    /*  ABOUT menu()
+     * Has to be on other side of termios block to allow key grabbing without
+     * Having to input return.
+     */
 
     menu();
     gameplay();
