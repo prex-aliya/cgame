@@ -228,7 +228,7 @@ void menu() {
 
 void level2(){
     /* TODO
-     * We change to fromtfacing view, we see side to side
+     * We change to frontfacing view, we see side to side
      * A and S are side - side
      * W up, R down
      */

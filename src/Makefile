@@ -1,5 +1,5 @@
 compile:
-	gcc -Ofast main.c -o a.out
+	gcc -Ofast main.c -o ../bin/a.out
 
 test: compile
-	./a.out
+	./../bin/a.out
