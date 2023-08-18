@@ -1,3 +1,11 @@
+/** @file paex_sine.c
+    @brief A game to play around with rendering types in c.
+    @author prex-aliya <>
+ */
+/*
+ * cGame: a game written in c to play around with other rendering types.
+ * Mathmaticaly, opengl, and more.
+ */
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -210,18 +218,18 @@ void menu() {
             if (sel <= 1) {
             } else {
                 sel--;
-                sound(1);
+                BEEP
             }
         } else if (input == 2) {
             if (sel >= 4) {
             } else {
                 sel++;
-                sound(1);
+                BEEP
             }
         } else if (input == 0) {
             break;
         } else if (input == 5 || input == 3) {
-            sound(1);
+            BEEP
             if (sel == 1) {
                 break;
             } else if (sel == 4) {
@@ -421,7 +429,7 @@ void gameplay() {
 int main() {
     // https://stackoverflow.com/questions/448944/c-non-blocking-keyboard-input
 
-    sound(1);
+    BEEP
 
     tcgetattr(STDIN_FILENO, &old_tio);
     new_tio = old_tio;

@@ -34,8 +34,9 @@
   fputs("\n", stdout);
 
 
-#define GAME_UPDATE_SPEED 50000
-#define MENU_UPDATE_SPEED 70000
+#define GAME_UPDATE_SPEED 16000
+#define MENU_UPDATE_SPEED 50000
+#define BEEP sound(1);
 
 
 

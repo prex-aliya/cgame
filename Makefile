@@ -1,7 +1,8 @@
-VERSION = 0.0.0
-# 		  ^ ^ ^- Patches
-#		  | +--- Minor bugs, spelling mistakes, etc.
-#		  +----- Major updates, Minor features, etc.
+NAME 	= cGAME
+VER		= 0.0.1
+# 		  ^ ^ ^- PATCH, spelling, small update.
+#		  | +--- MINOR, fatel bugs, etc.
+#		  +----- MAJOR, updates, Minor features, etc.
 # Semantic Versioning: https://semver.org/
 
 # Compiler and Linker
@@ -12,7 +13,8 @@ SOUND	= -lrt -lm -pthread
 CFLAGS	= $(OPP) $(SOUND)
 
 LIBD	= ./lib
-LIB		= $(LIBD)/libportaudio.a
+PTAUDIO	= $(LIBD)/libportaudio.a
+LIB		= $(PTAUDIO)
 
 BINNAME	= a.out
 BIND	= ./bin/$(BINNAME)
@@ -21,10 +23,10 @@ SRCD	= ./src
 SRC		= $(SRCD)/main.c
 
 all: compile options
-	@echo Finished
+	@echo Finished Building $(NAME) v$(VER)
 
 options:
-	@echo Build Options: audio$()
+	@echo Build Options:
 
 test: compile
 	$(BIND)
