@@ -388,25 +388,25 @@ void gameplay() {
             if (playery <= 1) {
             } else {
                 playery--;
-                BEEP
+                //BEEP
             }
         } else if (input == 2) {
             if (playery >= mapy-1+1) {
             } else {
                 playery++;
-                BEEP
+                //BEEP
             }
         } else if (input == 3) {
             if (playerx >= mapx-1) {
             } else {
                 playerx++;
-                BEEP
+                //BEEP
             }
         } else if (input == 4) {
             if (playerx <= 0) {
             } else {
                 playerx--;
-                BEEP
+                //BEEP
             }
         } else if (input == 6) {
             /*
