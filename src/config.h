@@ -34,9 +34,13 @@
   fputs("\n", stdout);
 
 
-#define GAME_UPDATE_SPEED 16000
+#define GAME_UPDATE_SPEED 50000
 #define MENU_UPDATE_SPEED 50000
-#define BEEP sound(1);
+
+#define SAMPLE_LENGTH 44500
+#define BEEP sine(60, SAMPLE_LENGTH);
+#define BEEP_SELECT sine(100, 46000);
+#define BEEPL(len) sine((len)*100, SAMPLE_LENGTH);
 
 
 
@@ -73,7 +77,3 @@ int kbhit() {
 //    if (k == 1) return 1;                       /* optional */
 //    return (k % 2) + 10 * int_to_binary(k / 2);
 //}
-
-void sound(int time) {
-    sine(time*100);
-}

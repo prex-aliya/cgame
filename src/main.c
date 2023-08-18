@@ -1,10 +1,6 @@
 /** @file paex_sine.c
     @brief A game to play around with rendering types in c.
-    @author prex-aliya <>
- */
-/*
- * cGame: a game written in c to play around with other rendering types.
- * Mathmaticaly, opengl, and more.
+    @author prex-aliya
  */
 #include <signal.h>
 #include <stdio.h>
@@ -81,9 +77,9 @@ void td_lvl_ren(int x, int y) {
         short int outy = (y/4)+(playery-7);
         short int outx = (x/4)+(playerx-7);
         if (outy == 0 && outx >= -1) {
-            printf(BYELLOW BIT("  ") RESET);
+            printf(RESET BYELLOW BIT("  ") RESET);
         } else if (outx > 16 && outy >= -1) {
-            printf(BGREEN YELLOW BIT(".*") RESET);
+            printf(RESET BGREEN YELLOW BIT(".*") RESET);
         } else {
             printf(RESET "\x1b[38;5;28m" BIT("~~") RESET);
         }
@@ -91,9 +87,9 @@ void td_lvl_ren(int x, int y) {
         short int outy = (y/4)+(playery-7);
         short int outx = (x/4)+(playerx-7);
         if (outy <= -1 && outy >= -3) {
-            printf(RESET "\x1b[38;5;28m~~" RESET);
+            printf(RESET "\x1b[38;5;28m" BIT("~~") RESET);
         } else if ( outy == 1) {
-            printf(BYELLOW "  ");
+            printf(BYELLOW BIT("  "));
         } else if ( outx == 19 && !(outy <= 0)) {
             printf(BYELLOW BIT("  ") RESET);
         } else {
@@ -229,7 +225,7 @@ void menu() {
         } else if (input == 0) {
             break;
         } else if (input == 5 || input == 3) {
-            BEEP
+            BEEP_SELECT
             if (sel == 1) {
                 break;
             } else if (sel == 4) {
@@ -272,7 +268,7 @@ void level1(){
     mapy = 19;
 
     if (playerx == 9 && playery == 12) {
-        sound(2);
+        BEEPL(2);
         playermove = false;
         playerview = false;
         level += 1;
@@ -333,7 +329,7 @@ void level0(){
 
     /* First Level Spacific */
     if (playerx == 8 && playery == 3) {
-        sound(2);
+        BEEPL(2);
         playermove = false;
         playerview = false;
     }
@@ -381,32 +377,36 @@ void runlevel() {
 }
 void gameplay() {
     fputs("\033c", stdout);
-    //render(firstmap);
     level0();
 
     do {
         int input = getinput();
-        printf("%d", input);
+        //printf("%d", input);
 
 
         if (input == 1) {
             if (playery <= 1) {
             } else {
-                playery--;}
+                playery--;
+                BEEP
+            }
         } else if (input == 2) {
             if (playery >= mapy-1+1) {
             } else {
                 playery++;
+                BEEP
             }
         } else if (input == 3) {
             if (playerx >= mapx-1) {
             } else {
                 playerx++;
+                BEEP
             }
         } else if (input == 4) {
             if (playerx <= 0) {
             } else {
                 playerx--;
+                BEEP
             }
         } else if (input == 6) {
             /*
