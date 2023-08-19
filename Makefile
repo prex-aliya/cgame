@@ -9,8 +9,9 @@ VER		= 0.0.2
 CC		= gcc
 
 OPP		= -Ofast
-SOUND	= -lrt -lm -pthread
-CFLAGS	= $(OPP) $(SOUND)
+SOUND	= -lrt -lm
+THREAD	= -lpthread
+CFLAGS	= $(OPP) $(THREAD) $(SOUND)
 
 LIBD	= ./lib
 PTAUDIO	= $(LIBD)/libportaudio.a

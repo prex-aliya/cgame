@@ -442,3 +442,9 @@ int main() {
     /* EXIT */
     finish();
 }
+
+/*
+ * TODO:
+ * - MULTITREADING
+ *  ` First with Audio, to do in background for fast gameplay
+ */
