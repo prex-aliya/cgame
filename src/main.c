@@ -111,13 +111,10 @@ void td_ren(unsigned int x, unsigned int y, unsigned short int map[mapy][mapx]) 
 
         register int z, zx = x*4;  /* zx for z, precomputed before loop */
         for (z=0; z<4; z++) {
-            short int realx = zx+z;
-            //short int sx = realx-((realx/4)*4);
-            //short int sy = y-((y/4)*4);
-            // Try using an array instead of a switch statment
-
-            // For constant look up time; sacrificing storagE for speed
-            char tiles[7][7] = {
+#define ERROR_TD_REN_TILES 7-1
+#define TOP_TD_REN_TILES ERROR_TD_REN_TILES-1
+            // For constant look up time; sacrificing storage for speed
+            char tiles[7][10] = {
                                 { BGREEN "  " },
                                 { BYELLOW "  " },
                                 { BGREEN "  " },
@@ -126,42 +123,23 @@ void td_ren(unsigned int x, unsigned int y, unsigned short int map[mapy][mapx]) 
                                 { BRED "!!" },
                                 { BBLACK "XX" }
                                 };
+            // TODO: replace zx+z with better
+            /*
+             * This is for computing the value of map at the current rendering
+             * place, then used in a macro twice -in a macro to avoid over
+             * complicating things when reading-, first to see if its withing
+             * the correct range of values, if not error, if, then equal that
+             * value.
+             */
+#define TILE_LOC (map_value <= TOP_TD_REN_TILES) ? map_value : \
+        ERROR_TD_REN_TILES
 
-            printf(RESET "%s" RESET,tiles[map[(y/4)+(playery-4)][(x+z)+(playerx-7)]]);
-            //switch (map[(y/4)+(playery-4)][(realx/4)+(playerx-7)]) {
-            //case 0: /* Print Green **/
-            //    //printf(BGREEN "%c%c", dirt[sy][sx], dirt[sy][sx]);
-            //    printf(BGREEN "  ");
-            //    break;
-            //case 1: /* Print Yellow */
-            //    printf(BYELLOW "  ");
-            //    break;
-            //case 2: /* Print Trees */
-            //    printf("\x1b[38;5;28m^^");
-            //    break;
-            //case 3: /* Print Blue */
-            //    printf(RESET BBLUE "  ");
-            //    break;
-            //case 4: /* Print Black */
-            //    printf(BBLACK "||");
-            //    break;
-            //case 5: /* Print Red */
-            //    printf(BRED "!!");
-            //    break;
-            //default: printf("XX"); /* Somethings Wrong */
-            //}
+            unsigned short int map_value = map[(y/4)+(playery-4)][(zx+z)/4+(playerx-7)];
+            printf(RESET "%s" RESET, tiles[TITLE_LOC]);
         }
     }
 }
 void render(unsigned short int map[mapy][mapx]) {
-    /* if tile like is needed */
-    //unsigned char dirt[4][4]={
-    //    {"    "},
-    //    {"    "},
-    //    {"    "},
-    //    {"    "}
-    //};
-
     register unsigned int x,y;
 
     PTOP
