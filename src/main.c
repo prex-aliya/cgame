@@ -134,8 +134,8 @@ void td_ren(unsigned int x, unsigned int y, unsigned short int map[mapy][mapx]) 
 #define TILE_LOC (map_value <= TOP_TD_REN_TILES) ? map_value : \
         ERROR_TD_REN_TILES
 
-            unsigned short int map_value = map[(y/4)+(playery-4)][(zx+z)/4+(playerx-7)];
-            printf(RESET "%s" RESET, tiles[TITLE_LOC]);
+            unsigned short int map_value = map[(y/4)+(playery-4)][(x+(z/4))+(playerx-7)];
+            printf(RESET "%s" RESET, tiles[TILE_LOC]);
         }
     }
 }
