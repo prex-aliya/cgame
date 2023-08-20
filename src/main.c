@@ -114,28 +114,42 @@ void td_ren(unsigned int x, unsigned int y, unsigned short int map[mapy][mapx]) 
             short int realx = zx+z;
             //short int sx = realx-((realx/4)*4);
             //short int sy = y-((y/4)*4);
-            switch (map[(y/4)+(playery-4)][(realx/4)+(playerx-7)]) {
-            case 0: /* Print Green **/
-                //printf(BGREEN "%c%c", dirt[sy][sx], dirt[sy][sx]);
-                printf(BGREEN "  ");
-                break;
-            case 1: /* Print Yellow */
-                printf(BYELLOW "  ");
-                break;
-            case 2: /* Print Trees */
-                printf("\x1b[38;5;28m^^");
-                break;
-            case 3: /* Print Blue */
-                printf(RESET BBLUE "  ");
-                break;
-            case 4: /* Print Black */
-                printf(BBLACK "||");
-                break;
-            case 5: /* Print Red */
-                printf(BRED "!!");
-                break;
-            default: printf("XX"); /* Somethings Wrong */
-            }
+            // Try using an array instead of a switch statment
+
+            // For constant look up time; sacrificing storagE for speed
+            char tiles[7][7] = {
+                                { BGREEN "  " },
+                                { BYELLOW "  " },
+                                { BGREEN "  " },
+                                { BBLUE "  " },
+                                { BBLACK "||" },
+                                { BRED "!!" },
+                                { BBLACK "XX" }
+                                };
+
+            printf(RESET "%s" RESET,tiles[map[(y/4)+(playery-4)][(x+z)+(playerx-7)]]);
+            //switch (map[(y/4)+(playery-4)][(realx/4)+(playerx-7)]) {
+            //case 0: /* Print Green **/
+            //    //printf(BGREEN "%c%c", dirt[sy][sx], dirt[sy][sx]);
+            //    printf(BGREEN "  ");
+            //    break;
+            //case 1: /* Print Yellow */
+            //    printf(BYELLOW "  ");
+            //    break;
+            //case 2: /* Print Trees */
+            //    printf("\x1b[38;5;28m^^");
+            //    break;
+            //case 3: /* Print Blue */
+            //    printf(RESET BBLUE "  ");
+            //    break;
+            //case 4: /* Print Black */
+            //    printf(BBLACK "||");
+            //    break;
+            //case 5: /* Print Red */
+            //    printf(BRED "!!");
+            //    break;
+            //default: printf("XX"); /* Somethings Wrong */
+            //}
         }
     }
 }
@@ -447,4 +461,5 @@ int main() {
  * TODO:
  * - MULTITREADING
  *  ` First with Audio, to do in background for fast gameplay
+ *   https://dev.to/quantumsheep/basics-of-multithreading-in-c-4pam
  */
