@@ -65,27 +65,22 @@ int getinput() {
     return value;
 }
 
-void debuginfo() {
-    printf("\n(%d, %d)",playerx, playery);
-    printf("\npmove: %d, pview: %d",playermove, playerview);
-    printf("\nxmap: %d, ymap: %d",mapx, mapy);
-    printf("\nframes: %d, level: %d",frames, level+1);
-}
+FUNCTION_DEBUG
+
 void td_lvl_ren(int x, int y) {
-    #define BIT(c) c c c c
+#define TD_LVL short int outy = (y/4)+(playery-7);
+    short int outx = (x/4)+(playerx-7);
+#define BIT(c) c c c c
+
     if (level == 0) {
-        short int outy = (y/4)+(playery-7);
-        short int outx = (x/4)+(playerx-7);
         if (outy == 0 && outx >= -1) {
             printf(RESET BYELLOW BIT("  ") RESET);
         } else if (outx > 16 && outy >= -1) {
             printf(RESET BGREEN YELLOW BIT(".*") RESET);
         } else {
-            printf(RESET "\x1b[38;5;28m" BIT("~~") RESET);
+            printf(RESET GREEN BIT("~~") RESET);
         }
     } else if (level == 1) {
-        short int outy = (y/4)+(playery-7);
-        short int outx = (x/4)+(playerx-7);
         if (outy <= -1 && outy >= -3) {
             printf(RESET "\x1b[38;5;28m" BIT("~~") RESET);
         } else if ( outy == 1) {
@@ -109,21 +104,21 @@ void td_ren(unsigned int x, unsigned int y, unsigned short int map[mapy][mapx]) 
         td_lvl_ren(x, y);
     } else {
 
-        register int z, zx = x*4;  /* zx for z, precomputed before loop */
+        register int z;
         for (z=0; z<4; z++) {
 #define ERROR_TD_REN_TILES 7-1
 #define TOP_TD_REN_TILES ERROR_TD_REN_TILES-1
             // For constant look up time; sacrificing storage for speed
-            char tiles[7][10] = {
+            char tiles[7][12] = {
                                 { BGREEN "  " },
                                 { BYELLOW "  " },
-                                { BGREEN "  " },
+                                { GREEN "//" },
                                 { BBLUE "  " },
                                 { BBLACK "||" },
                                 { BRED "!!" },
                                 { BBLACK "XX" }
                                 };
-            // TODO: replace zx+z with better
+            //printf(RESET "\x1b[38;5;28m" BIT("~~") RESET);
             /*
              * This is for computing the value of map at the current rendering
              * place, then used in a macro twice -in a macro to avoid over
@@ -160,8 +155,9 @@ void render(unsigned short int map[mapy][mapx]) {
 
     if (level == 0) { printf(RESET "GO TO CAR"); /* Level 1 Objective */
     } else if (level == 1) {printf(RESET "GO TO THE TOWER"); } /* Level 2 Objective */
-    /* DEBUG */
-    if (debug == true) { debuginfo(); }
+
+    HOUSE_DEBUG
+
     fputs("\n", stdout);
 }
 

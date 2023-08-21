@@ -8,6 +8,9 @@
  * without a space, so "START BBLACK GREEN END" would be, \x1b[40;32m", I wonder.
  */
 /* ISO C99 Requires space after micro name */
+// https://en.m.wikibooks.org/wiki/C_Programming/Preprocessor_directives_and_macros
+
+/* COLORS */
 #define BLACK    "\x1b[30m"
 #define RED      "\x1b[31m"
 #define GREEN    "\x1b[32m"
@@ -28,24 +31,39 @@
 
 #define RESET    "\x1b[0m"
 
-
+/* BOARDER PRINT */
 #define BOARDER_CHAR "                                                                                                                            "
 #define PTOP printf(BWHITE BOARDER_CHAR RESET); \
   fputs("\n", stdout);
 
-
+/* UPDATE SPEEDS */
 #define GAME_UPDATE_SPEED 50000
 #define MENU_UPDATE_SPEED 50000
 
+/* AUDIO */
 #define SAMPLE_LENGTH 44500
 #define BEEP sine(60, SAMPLE_LENGTH);
 #define BEEP_SELECT sine(100, 46000);
 #define BEEPL(len) sine((len)*100, SAMPLE_LENGTH);
 
+/* DEBUG */
+#define DEBUG true
+#if DEBUG
+#define HOUSE_DEBUG debug();
+#define FUNCTION_DEBUG void debug() {                               \
+        printf("\n(%d, %d)",playerx, playery);                      \
+        printf("\npmove: %d, pview: %d",playermove, playerview);    \
+        printf("\nxmap: %d, ymap: %d",mapx, mapy);                  \
+        printf("\nframes: %d, level: %d",frames, level+1);          \
+    }
+#else
+#define HOUSE_DEBUG
+#define FUNCTION_DEBUG
+#endif
 
 
 
-const bool debug=true;
+
 unsigned short int level=0;
 unsigned int frames=1;
 
