@@ -68,30 +68,31 @@ int getinput() {
 FUNCTION_DEBUG
 
 void td_lvl_ren(int x, int y) {
+
 #define TD_LVL short int outy = (y/4)+(playery-7);
     short int outx = (x/4)+(playerx-7);
-#define BIT(c) c c c c
+#define TOFOUR(c) c c c c
 
     if (level == 0) {
         if (outy == 0 && outx >= -1) {
-            printf(RESET BYELLOW BIT("  ") RESET);
+            printf(RESET BYELLOW TOFOUR("  ") RESET);
         } else if (outx > 16 && outy >= -1) {
-            printf(RESET BGREEN YELLOW BIT(".*") RESET);
+            printf(RESET BGREEN YELLOW TOFOUR(".*") RESET);
         } else {
-            printf(RESET GREEN BIT("~~") RESET);
+            printf(RESET GREEN TOFOUR("~~") RESET);
         }
     } else if (level == 1) {
         if (outy <= -1 && outy >= -3) {
-            printf(RESET "\x1b[38;5;28m" BIT("~~") RESET);
+            printf(RESET "\x1b[38;5;28m" TOFOUR("~~") RESET);
         } else if ( outy == 1) {
-            printf(BYELLOW BIT("  "));
+            printf(BYELLOW TOFOUR("  "));
         } else if ( outx == 19 && !(outy <= 0)) {
-            printf(BYELLOW BIT("  ") RESET);
+            printf(BYELLOW TOFOUR("  ") RESET);
         } else {
-            printf(BGREEN YELLOW BIT("/*") RESET);
+            printf(BGREEN YELLOW TOFOUR("/*") RESET);
         }
     } else {
-            printf(RESET "\x1b[38;5;28m" BIT("~~") RESET);
+            printf(RESET "\x1b[38;5;28m" TOFOUR("~~") RESET);
     }
 }
 void td_ren(unsigned int x, unsigned int y, unsigned short int map[mapy][mapx]) {
