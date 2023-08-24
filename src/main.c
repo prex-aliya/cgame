@@ -96,15 +96,14 @@ void td_ren(unsigned int x, unsigned int y, unsigned short int map[mapy][mapx]) 
 #define TOP_TD_REN_TILES ERROR_TD_REN_TILES-1
             // For constant look up time; sacrificing storage for speed
             char tiles[7][12] = {
-                                { BGREEN "  " },
-                                { BYELLOW "  " },
-                                { GREEN "//" },
-                                { BBLUE "  " },
-                                { BBLACK "||" },
-                                { BRED "!!" },
-                                { BBLACK "XX" }
-                                };
-            //printf(RESET "\x1b[38;5;28m" BIT("~~") RESET);
+                { BGREEN "  " },
+                { BYELLOW "  " },
+                { GREEN "//" },
+                { BBLUE "  " },
+                { BBLACK "||" },
+                { BRED "!!" },
+                { BBLACK "XX" }
+            };
             /*
              * This is for computing the value of map at the current rendering
              * place, then used in a macro twice -in a macro to avoid over
@@ -148,32 +147,48 @@ void render(unsigned short int map[mapy][mapx]) {
 }
 
 void printmenu(unsigned short int select) {
-    register unsigned int i,e;
-    fputs("\033c", stdout); /* Clear Screen */
-    printf("\n\n");
-    for (e=1; e<=4; e++) {
-    /* https://www.theurbanpenguin.com/4184-2/
-     * reset color */
-        printf("\033[0;0m");
-        for (i=0; i<width/4; i++) {
-            printf("    ");
-        }
-        if (select == e) {
-            printf("\033[1;37m>");
-        }
-        if (e == 1) {
-            printf("START\033[0;0m\n");
-        } else if (e == 2) {
-            printf("SAVE\033[0;0m\n");
-        } else if (e == 3) {
-            printf("SETTINGS\033[0;0m\n");
-        } else if (e == 4) {
-            printf("QUIT\033[0;0m\n");
-        } else {}
-    }
+    //register unsigned int i,e;
+    fputs("\033c\n\n", stdout); /* Clear Screen */
+
+    //for (e=1; e<=4; e++) {
+        //printf( RESET );
+        //for (i=0; i<width/4; i++) {
+        //    printf("    ");
+        //}
+        //if (select == e) {
+        //    printf( ">");
+        //}
+
+
+    char print_item[4][100] = {
+        { "START" },
+        { "SAVE" },
+        { "SETTINGS" },
+        { "QUIT" }
+    };
+
+    char print_item_select[100];
+    strcpy(print_item_select, print_item[select]);
+    sprintf(print_item[select], "\x1b[1m>%s" RESET, print_item_select);
+
+    printf( "\t\t%s\n", print_item[0] );
+    printf( "\t\t%s\n", print_item[1] );
+    printf( "\t\t%s\n", print_item[2] );
+    printf( "\t\t%s\n", print_item[3] );
+
+        //if (e == 1) {
+        //    printf("START\033[0;0m\n");
+        //} else if (e == 2) {
+        //    printf("SAVE\033[0;0m\n");
+        //} else if (e == 3) {
+        //    printf("SETTINGS\033[0;0m\n");
+        //} else if (e == 4) {
+        //    printf("QUIT\033[0;0m\n");
+        //} else {}
+    //}
 }
 void menu() {
-    unsigned short int sel = 1;
+    unsigned short int sel = 0;
     int input;
 
     do {
@@ -183,7 +198,7 @@ void menu() {
         input = getinput();
 
         if (input == 1) {
-            if (!(sel <= 1)) {
+            if (!(sel <= 0)) {
                 sel--;
                 BEEP
             }
@@ -203,7 +218,7 @@ void menu() {
 
         fputs("\033c", stdout); /* Clear Screen */
         usleep(MENU_UPDATE_SPEED);
-    } while (sel != 0);
+    } while (true);
 }
 
 

@@ -1,4 +1,5 @@
 #include <stdbool.h>
+#include <string.h>
 #include <termios.h>
 #include <sys/select.h>
 #include <stdlib.h> /* For NULL */
