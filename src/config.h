@@ -49,7 +49,7 @@
 
 
 /* DEBUG */
-#define DEBUG false
+#define DEBUG true
 #if DEBUG
 #define HOUSE_DEBUG debug();
 #define FUNCTION_DEBUG void debug() {                               \

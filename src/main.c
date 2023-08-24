@@ -30,24 +30,23 @@ int getinput() {
     unsigned short int value;
     char input = getchar();
     if (input == 27) {
-        if (getchar() == 91) {
-            switch(getchar()) {
-                case 65: /* up */
-                    value = 1;
-                    break;
-                case 66: /* down */
-                    value = 2;
-                    break;
-                case 67: /* right */
-                    value = 3;
-                    break;
-                case 68: /* left */
-                    value = 4;
-                    break;
-            }
-        } else {
-            value = 6; /* esc */
-        }
+        getchar(); /* Skip the ^[ for arrow keys */
+        //if (getchar() == 91) {
+            value = getchar()-64;
+            //switch(getchar()) {
+            //    case 65: /* up */
+            //        value = 1;
+            //        break;
+            //    case 66: /* down */
+            //        value = 2;
+            //        break;
+            //    case 67: /* right */
+            //        value = 3;
+            //        break;
+            //    case 68: /* left */
+            //        value = 4;
+            //        break;
+            //}
     } else if (input == 119 || input == 107) {
         value = 1;
     } else if (input == 114 || input == 106) {
@@ -433,8 +432,7 @@ int main() {
     finish();
 }
 
-/*
- * TODO:
+/* TODO:
  * - MULTITREADING
  *  ` First with Audio, to do in background for fast gameplay
  *   https://dev.to/quantumsheep/basics-of-multithreading-in-c-4pam
