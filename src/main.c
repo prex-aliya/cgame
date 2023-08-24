@@ -188,31 +188,37 @@ void printmenu(unsigned short int select) {
     //}
 }
 void menu() {
-    unsigned short int sel = 0;
-    int input;
+    unsigned short int sel=0, seln=1;
+    unsigned short int input;
 
     do {
         /* TODO: if no change in select then donot print again */
         printmenu(sel);
         fflush(stdout);
+
+        while (!kbhit()) {}
+
         input = getinput();
 
         if (input == 1 && sel > 0) {
             sel--;
             BEEP
-        } else if (input == 2 && sel < 3) {
+                } else if (input == 2 && sel < 3) {
             sel++;
             BEEP
-        } else if (input == 0) break;
+                } else if (input == 0) break;
         else if (input == 5 || input == 3) {
             BEEP_SELECT
 
-            if (sel == 1) break;
-            else if (sel == 4) finish();
+                if (sel == 1) break;
+                else if (sel == 4) finish();
         } else sel == 1;
 
         fputs("\033c", stdout); /* Clear Screen */
         usleep(MENU_UPDATE_SPEED);
+        seln = sel;
+
+
     } while (true);
 }
 
@@ -358,33 +364,24 @@ void gameplay() {
 
     do {
         int input = getinput();
-        //printf("%d", input);
 
 
         if (input == 1) {
             if (playery <= 1) {
-            } else {
-                playery--;
-                //BEEP
-            }
+            } else playery--;
+
         } else if (input == 2) {
             if (playery >= mapy-1+1) {
-            } else {
-                playery++;
-                //BEEP
-            }
+            } else playery++;
+
         } else if (input == 3) {
             if (playerx >= mapx-1) {
-            } else {
-                playerx++;
-                //BEEP
-            }
+            } else playerx++;
+
         } else if (input == 4) {
             if (playerx <= 0) {
-            } else {
-                playerx--;
-                //BEEP
-            }
+            } else playerx--;
+
         } else if (input == 6) {
             /*
             * TODO: Change new function escape, deturmines which during what
