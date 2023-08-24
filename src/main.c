@@ -160,14 +160,14 @@ void printmenu(unsigned short int select) {
         //}
 
 
-    char print_item[4][100] = {
+    char print_item[4][20] = {
         { "START" },
         { "SAVE" },
         { "SETTINGS" },
         { "QUIT" }
     };
 
-    char print_item_select[100];
+    char print_item_select[20];
     strcpy(print_item_select, print_item[select]);
     sprintf(print_item[select], "\x1b[1m>%s" RESET, print_item_select);
 
@@ -197,19 +197,14 @@ void menu() {
         fflush(stdout);
         input = getinput();
 
-        if (input == 1) {
-            if (!(sel <= 0)) {
-                sel--;
-                BEEP
-            }
-        } else if (input == 2) {
-            if (!(sel >= 4)) {
-                sel++;
-                BEEP
-            }
-        } else if (input == 0) {
-            break;
-        } else if (input == 5 || input == 3) {
+        if (input == 1 && sel > 0) {
+            sel--;
+            BEEP
+        } else if (input == 2 && sel < 3) {
+            sel++;
+            BEEP
+        } else if (input == 0) break;
+        else if (input == 5 || input == 3) {
             BEEP_SELECT
 
             if (sel == 1) break;
