@@ -31,37 +31,22 @@ int getinput() {
     char input = getchar();
     if (input == 27) {
         getchar(); /* Skip the ^[ for arrow keys */
-        //if (getchar() == 91) {
-            value = getchar()-64;
-            //switch(getchar()) {
-            //    case 65: /* up */
-            //        value = 1;
-            //        break;
-            //    case 66: /* down */
-            //        value = 2;
-            //        break;
-            //    case 67: /* right */
-            //        value = 3;
-            //        break;
-            //    case 68: /* left */
-            //        value = 4;
-            //        break;
-            //}
+         return getchar()-64;
     } else if (input == 119 || input == 107) {
-        value = 1;
+         return 1;
     } else if (input == 114 || input == 106) {
-        value = 2;
+         return 2;
     } else if (input == 115 || input == 108 ) {
-        value = 3;
+         return 3;
     } else if (input == 97 || input == 104 ) {
-        value = 4;
-    }
-    else if (input == 113) {
-        value = 0;
+         return 4;
+    } else if (input == 113) {
+         return 0;
     } else {
-        value = 5;
+         return 5;
     }
-    return value;
+
+    return 0;
 }
 FUNCTION_DEBUG
 
@@ -189,25 +174,21 @@ void printmenu(unsigned short int select) {
 }
 void menu() {
     unsigned short int sel = 1;
-    unsigned short int seln = 1;
     int input;
 
     do {
         /* TODO: if no change in select then donot print again */
-
         printmenu(sel);
         fflush(stdout);
         input = getinput();
 
         if (input == 1) {
-            if (sel <= 1) {
-            } else {
+            if (!(sel <= 1)) {
                 sel--;
                 BEEP
             }
         } else if (input == 2) {
-            if (sel >= 4) {
-            } else {
+            if (!(sel >= 4)) {
                 sel++;
                 BEEP
             }
@@ -215,17 +196,14 @@ void menu() {
             break;
         } else if (input == 5 || input == 3) {
             BEEP_SELECT
-            if (sel == 1) {
-                break;
-            } else if (sel == 4) {
-                finish();
-            }
-        } else { }
+
+            if (sel == 1) break;
+            else if (sel == 4) finish();
+        } else sel == 1;
+
         fputs("\033c", stdout); /* Clear Screen */
         usleep(MENU_UPDATE_SPEED);
-
-
-    } while (select != 0);
+    } while (sel != 0);
 }
 
 
