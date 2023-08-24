@@ -3,7 +3,6 @@
     @author prex-aliya
  */
 #include <signal.h>
-#include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <termios.h>
@@ -157,10 +156,7 @@ void printmenu(unsigned short int select) {
         { "QUIT" }
     };
 
-    //char print_item_select[20];
-    //strcpy(print_item_select, print_item[select]);
-    //sprintf(print_item[select], "\x1b[1m>%s" RESET, print_item[select]);
-
+    /* TODO: remove extra for loop */
     for (int i = 0; i < 5; i++) {
         for (int j = 19; j != 0; j--) {
             print_item[select][j] = print_item[select][j-1];
