@@ -3,6 +3,7 @@
     @author prex-aliya
  */
 #include <signal.h>
+#include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <termios.h>
@@ -147,18 +148,7 @@ void render(unsigned short int map[mapy][mapx]) {
 }
 
 void printmenu(unsigned short int select) {
-    //register unsigned int i,e;
-    fputs("\033c\n\n", stdout); /* Clear Screen */
-
-    //for (e=1; e<=4; e++) {
-        //printf( RESET );
-        //for (i=0; i<width/4; i++) {
-        //    printf("    ");
-        //}
-        //if (select == e) {
-        //    printf( ">");
-        //}
-
+    fputs("\033c\n\n", stdout); /* Clear Screen + Shift Down */
 
     char print_item[4][20] = {
         { "START" },
@@ -167,29 +157,28 @@ void printmenu(unsigned short int select) {
         { "QUIT" }
     };
 
-    char print_item_select[20];
-    strcpy(print_item_select, print_item[select]);
-    sprintf(print_item[select], "\x1b[1m>%s" RESET, print_item_select);
+    //char print_item_select[20];
+    //strcpy(print_item_select, print_item[select]);
+    //sprintf(print_item[select], "\x1b[1m>%s" RESET, print_item[select]);
 
-    printf( "\t\t%s\n", print_item[0] );
-    printf( "\t\t%s\n", print_item[1] );
-    printf( "\t\t%s\n", print_item[2] );
-    printf( "\t\t%s\n", print_item[3] );
+    for (int i = 0; i < 5; i++) {
+        for (int j = 19; j != 0; j--) {
+            print_item[select][j] = print_item[select][j-1];
+        }
+    }
 
-        //if (e == 1) {
-        //    printf("START\033[0;0m\n");
-        //} else if (e == 2) {
-        //    printf("SAVE\033[0;0m\n");
-        //} else if (e == 3) {
-        //    printf("SETTINGS\033[0;0m\n");
-        //} else if (e == 4) {
-        //    printf("QUIT\033[0;0m\n");
-        //} else {}
-    //}
+    print_item[select][0] = '\x1b';
+    print_item[select][1] = '[';
+    print_item[select][2] = '1';
+    print_item[select][3] = 'm';
+    print_item[select][4] = '>';
+
+    for (int i = 0; i < 4; i++) {
+    printf( RESET "\t\t%s\n", print_item[i] );
+    }
 }
 void menu() {
-    unsigned short int sel=0;
-    unsigned short int input;
+    unsigned short int sel=0, input;
 
     do {
         printmenu(sel);
@@ -204,13 +193,14 @@ void menu() {
         } else if (input == 2 && sel < 3) {
             sel++;
             BEEP
-        } else if (input == 0) break;
-        else if (input == 5 || input == 3) {
+        } else if (input == 0) { break;
+        } else if (input == 5 || input == 3) {
             BEEP_SELECT
 
-            if (sel == 1) break;
-            else if (sel == 4) finish();
-        } else sel == 1;
+            if (sel == 0) break;
+            else if (sel == 3) finish();
+        } else if (input == 6) finish();
+        else sel == 1;
 
         fputs("\033c", stdout); /* Clear Screen */
         usleep(MENU_UPDATE_SPEED);
@@ -354,9 +344,9 @@ void gameplay() {
     fputs("\033c", stdout);
     level0();
 
+    int input;
     do {
-        int input = getinput();
-
+        input = getinput();
 
         if (input == 1) {
             if (playery <= 1) {
