@@ -64,24 +64,25 @@ int getinput() {
     }
     return value;
 }
-
 FUNCTION_DEBUG
 
 void td_lvl_ren(int x, int y) {
 
-#define TD_LVL short int outy = (y/4)+(playery-7);
+#define TD_LVL_VAR short int outy = (y/4)+(playery-7); \
     short int outx = (x/4)+(playerx-7);
 #define TOFOUR(c) c c c c
 
     if (level == 0) {
-        if (outy == 0 && outx >= -1) {
-            printf(RESET BYELLOW TOFOUR("  ") RESET);
+        TD_LVL_VAR
+        if (outy == 0 && outx <= 0) {
+            printf(RESET YELLOW BYELLOW "        " RESET);
         } else if (outx > 16 && outy >= -1) {
             printf(RESET BGREEN YELLOW TOFOUR(".*") RESET);
         } else {
             printf(RESET GREEN TOFOUR("~~") RESET);
         }
     } else if (level == 1) {
+        TD_LVL_VAR
         if (outy <= -1 && outy >= -3) {
             printf(RESET "\x1b[38;5;28m" TOFOUR("~~") RESET);
         } else if ( outy == 1) {
@@ -409,7 +410,7 @@ void gameplay() {
             usleep(GAME_UPDATE_SPEED); /* Sleep in microseconds */
             fputs("\033c", stdout);
             runlevel();
-            frames+=1;
+            FRAMES_INCREMENT
         }
 
     } while (1);

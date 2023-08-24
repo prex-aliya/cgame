@@ -46,8 +46,10 @@
 #define BEEP_SELECT sine(100, 46000);
 #define BEEPL(len) sine((len)*100, SAMPLE_LENGTH);
 
+
+
 /* DEBUG */
-#define DEBUG true
+#define DEBUG false
 #if DEBUG
 #define HOUSE_DEBUG debug();
 #define FUNCTION_DEBUG void debug() {                               \
@@ -56,16 +58,22 @@
         printf("\nxmap: %d, ymap: %d",mapx, mapy);                  \
         printf("\nframes: %d, level: %d",frames, level+1);          \
     }
+#define FRAMES_ASSIGN unsigned int frames=1;
+#define FRAMES_INCREMENT frames+=1;
+
 #else
+
 #define HOUSE_DEBUG
 #define FUNCTION_DEBUG
+#define FRAMES_ASSIGN
+#define FRAMES_INCREMENT
 #endif
 
 
 
 
 unsigned short int level=0;
-unsigned int frames=1;
+FRAMES_ASSIGN
 
 const unsigned int height=7;
 const unsigned int width=15;
