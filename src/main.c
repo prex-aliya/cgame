@@ -192,7 +192,6 @@ void menu() {
     unsigned short int input;
 
     do {
-        /* TODO: if no change in select then donot print again */
         printmenu(sel);
         fflush(stdout);
 
@@ -350,13 +349,10 @@ void level0(){
 }
 void runlevel() {
     /* Run the Level */
-    if (level == 0) {
-        level0();
-    } else if (level == 1) {
-        level1();
-    } else {
-        level2();
-    }
+    if (level == 0) level0();
+    else if (level == 1) level1();
+    else if (level == 2) level2();
+    else finish();
 }
 void gameplay() {
     fputs("\033c", stdout);
