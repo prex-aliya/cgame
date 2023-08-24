@@ -1,5 +1,5 @@
 NAME 	= cGAME
-VER		= 0.0.3
+VER		= 0.0.4
 # 		  ^ ^ ^- PATCH, spelling, small update.
 #		  | +--- MINOR, fatel bugs, etc.
 #		  +----- MAJOR, updates, Minor features, etc.
