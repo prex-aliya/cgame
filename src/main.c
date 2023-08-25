@@ -156,13 +156,18 @@ void printmenu(unsigned short int select) {
         { "QUIT" }
     };
 
-    /* TODO: remove extra for loop */
-    for (int i = 0; i < 5; i++) {
-        for (int j = 19; j != 0; j--) {
-            print_item[select][j] = print_item[select][j-1];
-        }
+    /*
+     * 19, and 4, is less than because arrays start a 0.
+     * This shifts the array over by five, so that we can prepend the
+     * "\x1b[1m>", this is faster than if select == on each, and printing the
+     * prepend first. This counts down from 19 to 4, so we dont over write the
+     * entire array with the first array point.
+     */
+    for (int j = 19; j > 4; j--) {
+        print_item[select][j] = print_item[select][j-5];
     }
 
+    /* TODO this is not very elagent */
     print_item[select][0] = '\x1b';
     print_item[select][1] = '[';
     print_item[select][2] = '1';

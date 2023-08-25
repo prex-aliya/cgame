@@ -1,6 +1,4 @@
 #include <stdbool.h>
-#include <termios.h>
-#include <sys/select.h>
 #include <stdlib.h> /* For NULL */
 #include "../lib/paex_sine.c"
 
@@ -99,8 +97,3 @@ int kbhit() {
 
 /* https://stackoverflow.com/questions/5488377/converting-an-integer-to-binary-in-c
    More Magic */
-//unsigned int_to_binary(unsigned k) {
-//    if (k == 0) return 0;
-//    if (k == 1) return 1;                       /* optional */
-//    return (k % 2) + 10 * int_to_binary(k / 2);
-//}
