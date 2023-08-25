@@ -20,18 +20,21 @@ void finish() {
     exit(0);
 }
 
-int getinput() {
+short int getinput() {
     /* NOTE:
      * 1 = up
      * 2 = down
      * 3 = right
      * 4 = left
-       */
+     */
+
     unsigned short int value;
     char input = getchar();
     if (input == 27) {
         getchar(); /* Skip the ^[ for arrow keys */
-         return getchar()-64;
+        /* The return values are equivilent to subtracting 64 from the input
+         * keys numbers, so much smaller than if-else or switch */
+        return getchar()-64;
     } else if (input == 119 || input == 107) {
          return 1;
     } else if (input == 114 || input == 106) {
@@ -50,44 +53,46 @@ int getinput() {
 }
 FUNCTION_DEBUG
 
-void td_lvl_ren(int x, int y) {
+void td_lvl_mtn(int x, int y) {
+#define TD_MTN_OUT_VAR short int outy = (y/4)+(playery-7); \
+    short int outx = x+(playerx-7);
+#define TO4(c) c c c c
+#define PRINT_COLOR(color, print) printf(color TO4(print));
 
-#define TD_LVL_VAR short int outy = (y/4)+(playery-7); \
-    short int outx = (x/4)+(playerx-7);
-#define TOFOUR(c) c c c c
 
     if (level == 0) {
-        TD_LVL_VAR
-        if (outy == 0 && outx <= 0) {
-            printf(RESET YELLOW BYELLOW "        " RESET);
-        } else if (outx > 16 && outy >= -1) {
-            printf(RESET BGREEN YELLOW TOFOUR(".*") RESET);
-        } else {
-            printf(RESET GREEN TOFOUR("~~") RESET);
-        }
+        TD_MTN_OUT_VAR
+        if (outy == 0)
+            PRINT_COLOR(BYELLOW YELLOW, "  ")
+        else if (outx > 16 && outy >= -1)
+            PRINT_COLOR(BGREEN YELLOW, ".*")
+        else
+            PRINT_COLOR(GREEN, "~~") /* Trees */
+
     } else if (level == 1) {
-        TD_LVL_VAR
-        if (outy <= -1 && outy >= -3) {
-            printf(RESET "\x1b[38;5;28m" TOFOUR("~~") RESET);
-        } else if ( outy == 1) {
-            printf(BYELLOW TOFOUR("  "));
-        } else if ( outx == 19 && !(outy <= 0)) {
-            printf(BYELLOW TOFOUR("  ") RESET);
-        } else {
-            printf(BGREEN YELLOW TOFOUR("/*") RESET);
-        }
+        TD_MTN_OUT_VAR
+        if (outy <= -1 && outy >= -3) /* Trees */
+            PRINT_COLOR(GREEN, "~~")
+         else if ( outy == 1)
+            PRINT_COLOR(BYELLOW, "  ")
+         else if ( outx == 19 && !(outy <= 0))
+            PRINT_COLOR(BYELLOW, "  ")
+         else
+            PRINT_COLOR(BGREEN YELLOW, "/*")
+
     } else {
-            printf(RESET "\x1b[38;5;28m" TOFOUR("~~") RESET);
+            PRINT_COLOR(RED, "XX");
     }
 }
 void td_ren(unsigned int x, unsigned int y, unsigned short int map[mapy][mapx]) {
     if (x == 7 && y/4 == 3 && playerview == true) { /* render player */
-        if (y-((y/4)*4) < 2) { printf(BBLACK "        " RESET);
-        } else { printf(BRED "        " RESET); }
+        if (y-((y/4)*4) < 2)
+            printf(BBLACK TO4("  ") RESET);
+        else
+            printf(BRED TO4("  ") RESET);
+
     } else if (x+(playerx-7) > mapx-1 || (y/4)+(playery-4) > mapy-1) {
-        /* Rendrers Out Mountians Per Level */
-        // TODO: split to seperate functions
-        td_lvl_ren(x, y);
+        td_lvl_mtn(x, y);
     } else {
 
         register int z;
@@ -114,7 +119,8 @@ void td_ren(unsigned int x, unsigned int y, unsigned short int map[mapy][mapx]) 
 #define TILE_LOC (map_value <= TOP_TD_REN_TILES) ? map_value : \
         ERROR_TD_REN_TILES
 
-            unsigned short int map_value = map[(y/4)+(playery-4)][(x+(z/4))+(playerx-7)];
+            unsigned short int map_value =
+                map[(y/4)+(playery-4)][(x+(z/4))+(playerx-7)];
             printf(RESET "%s" RESET, tiles[TILE_LOC]);
         }
     }
@@ -163,9 +169,8 @@ void printmenu(unsigned short int select) {
      * prepend first. This counts down from 19 to 4, so we dont over write the
      * entire array with the first array point.
      */
-    for (int j = 19; j > 4; j--) {
+    for (int j = 19; j > 4; j--)
         print_item[select][j] = print_item[select][j-5];
-    }
 
     /* TODO this is not very elagent */
     print_item[select][0] = '\x1b';
@@ -174,9 +179,8 @@ void printmenu(unsigned short int select) {
     print_item[select][3] = 'm';
     print_item[select][4] = '>';
 
-    for (int i = 0; i < 4; i++) {
-    printf( RESET "\t\t%s\n", print_item[i] );
-    }
+    for (int i = 0; i < 4; i++)
+        printf( RESET "\t\t%s\n", print_item[i] );
 }
 void menu() {
     unsigned short int sel=0, input;
@@ -185,7 +189,7 @@ void menu() {
         printmenu(sel);
         fflush(stdout);
 
-        while (!kbhit()) {}
+        while (!kbhit()) { }
         input = getinput();
 
         if (input == 1 && sel > 0) {
@@ -203,8 +207,8 @@ void menu() {
         } else if (input == 6) finish();
         else sel == 1;
 
-        fputs("\033c", stdout); /* Clear Screen */
         usleep(MENU_UPDATE_SPEED);
+        fputs("\033c", stdout); /* Clear Screen */
     } while (true);
 }
 
@@ -336,6 +340,7 @@ void level0(){
 }
 void runlevel() {
     /* Run the Level */
+    /* TODO must be constant speed solution? */
     if (level == 0) level0();
     else if (level == 1) level1();
     else if (level == 2) level2();
@@ -379,14 +384,13 @@ void gameplay() {
             runlevel();
             FRAMES_INCREMENT
         }
-
     } while (1);
 }
 
 int main() {
     // https://stackoverflow.com/questions/448944/c-non-blocking-keyboard-input
 
-    BEEP
+    BEEP BEEP BEEP
 
     tcgetattr(STDIN_FILENO, &old_tio);
     new_tio = old_tio;

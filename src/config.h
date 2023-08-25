@@ -5,8 +5,6 @@
 /* TODO: test if their is a way to have theis macros be right next to each other
  * without a space, so "START BBLACK GREEN END" would be, \x1b[40;32m", I wonder.
  */
-/* ISO C99 Requires space after micro name */
-// https://en.m.wikibooks.org/wiki/C_Programming/Preprocessor_directives_and_macros
 
 /* COLORS */
 #define BLACK    "\x1b[30m"
