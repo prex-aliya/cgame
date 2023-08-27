@@ -46,7 +46,6 @@
 #define BEEPL(len) sine((len)*100, SAMPLE_LENGTH);
 
 
-
 /* DEBUG */
 #define DEBUG true
 #if DEBUG
@@ -79,8 +78,8 @@ const unsigned int width=15;
 unsigned short int mapx=20;
 unsigned short int mapy=10;
 
-unsigned short int playerx=8;
-unsigned short int playery=4;
+int playerx=8;
+int playery=4;
 bool playermove=true;
 bool playerview=true;
 

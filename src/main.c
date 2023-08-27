@@ -97,18 +97,18 @@ void td_ren(unsigned int x, unsigned int y, unsigned short int map[mapy][mapx]) 
 
         register int z;
         for (z=0; z<4; z++) {
-#define ERROR_TD_REN_TILES 7-1
-#define TOP_TD_REN_TILES ERROR_TD_REN_TILES-1
+            #define ERROR_TD_REN_TILES 7-1
+            #define TOP_TD_REN_TILES ERROR_TD_REN_TILES-1
             // For constant look up time; sacrificing storage for speed
             char tiles[7][12] = {
-            { BGREEN "  " },
-            { BYELLOW "  " },
-            { GREEN "//" },
-            { BBLUE "  " },
-            { BBLACK "||" },
-            { BRED "!!" },
-            { BBLACK "XX" }
-        };
+                { BGREEN "  " },
+                { BYELLOW "  " },
+                { GREEN "//" },
+                { BBLUE "  " },
+                { BBLACK "||" },
+                { BRED "!!" },
+                { BBLACK "XX" }
+            };
             /*
              * This is for computing the value of map at the current rendering
              * place, then used in a macro twice -in a macro to avoid over
@@ -116,7 +116,7 @@ void td_ren(unsigned int x, unsigned int y, unsigned short int map[mapy][mapx]) 
              * the correct range of values, if not error, if, then equal that
              * value.
              */
-#define TILE_LOC (map_value <= TOP_TD_REN_TILES) ? map_value :  \
+            #define TILE_LOC (map_value <= TOP_TD_REN_TILES) ? map_value :  \
             ERROR_TD_REN_TILES
 
             unsigned short int map_value =
@@ -369,11 +369,7 @@ void gameplay() {
             menu();
         }
 
-        /* Negative X is missfunctional, remove view of non procedural parts, so
-         * not allowing anyone past for now. */
-
-        #define NEG_PLAYER_X && !(playerx+inc_sel[input] < 0)
-        if (input > 2 NEG_PLAYER_X) {
+        if (input > 2) {
             playerx+=inc_sel[input];
         } else if (input <= 2) {
             playery+=inc_sel[input];
