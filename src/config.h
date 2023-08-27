@@ -33,7 +33,7 @@
   fputs("\n", stdout);
 
 /* UPDATE SPEEDS */
-#define GAME_UPDATE_SPEED 50000
+int GAME_UPDATE_SPEED = 50000;
 #define MENU_UPDATE_SPEED 40000
 
 /* MENU */
@@ -80,6 +80,7 @@ unsigned short int mapy=10;
 
 int playerx=8;
 int playery=4;
+unsigned short int player_resistance = 1;
 bool playermove=true;
 bool playerview=true;
 

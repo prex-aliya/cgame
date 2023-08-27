@@ -1,4 +1,4 @@
-/** @file paex_sine.c
+/** @file main.c
     @brief A game to play around with rendering types in c.
     @author prex-aliya
 */
@@ -13,13 +13,16 @@
 struct termios old_tio, new_tio;
 
 
+/* TOP LEVEL FUNCTIONS: used to exit, need to be available everywhere. */
 int sig_caught=0;
 void signal_handler(int sig) {if (sig == SIGINT) {sig_caught=1;}}
 void finish() {
     tcsetattr(STDIN_FILENO, TCSANOW, &old_tio); /* restore former settings */
+    printf("\x1b[0m");
     exit(0);
 }
 
+/* MISC/INPUT */
 short int getinput() {
     /* NOTE:
      * 1 = up
@@ -29,12 +32,12 @@ short int getinput() {
      */
 
     unsigned short int value;
-    char input = getchar();
+    char input = fgetc(stdin);
     if (input == 27) {
-        getchar(); /* Skip the ^[ for arrow keys */
+        fgetc(stdin); /* Skip the ^[ for arrow keys */
         /* The return values are equivilent to subtracting 64 from the input
          * keys numbers, so much smaller than if-else or switch */
-        return getchar()-64;
+        return fgetc(stdin)-64;
     } else if (input == 119 || input == 107) {
         return 1;
     } else if (input == 114 || input == 106) {
@@ -53,6 +56,7 @@ short int getinput() {
 }
 FUNCTION_DEBUG
 
+/* RENDERING */
 void td_lvl_mtn(int x, int y) {
 #define TD_MTN_OUT_VAR short int outy = (y/4)+(playery-7);  \
     short int outx = x+(playerx-7);
@@ -152,6 +156,7 @@ void render(unsigned short int map[mapy][mapx]) {
         fputs("\n", stdout);
 }
 
+/* MENU */
 void printmenu(unsigned short int select) {
     fputs("\033c\n\n", stdout); /* Clear Screen + Shift Down */
 
@@ -212,9 +217,9 @@ void menu() {
     } while (true);
 }
 
-
-void level2(){}
-void level1(){
+/* More Front End, more code, for the astetics. */
+void level2() {}
+void level1() {
     unsigned short int map[19][19]={
     {2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2},
     {2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2},
@@ -286,7 +291,8 @@ void level1(){
         playerview=true;
     }
 }
-void level0(){
+void level05() {} // TODO: increase the cutscene to include going down the road
+void level0() {
     unsigned short int map[10][20]={
     {2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2},
     {2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2},
@@ -305,9 +311,14 @@ void level0(){
         BEEPL(2);
         playermove = false;
         playerview = false;
-    }
-
-    if (playermove == false) {
+    } else if (playerx >= 1000) {
+        /* If follow road long enough, start next level */
+        BEEPL(2);
+        playermove = false;
+        playerview = false;
+        playerx = 8; playery = 3;
+        level1();
+    } else if (playermove == false) {
         /* TODO: fix screen tearing */
         map[2][7]  = 0;
         map[2][10] = 3;
@@ -338,7 +349,9 @@ void level0(){
         render(map);
     }
 }
+/* The Drivers of the Game */
 void runlevel() {
+    fputs("\033c", stdout);
     /* Run the Level */
     /* TODO must be constant speed solution? */
     if (level == 0) level0();
@@ -355,32 +368,43 @@ void gameplay() {
      * nothing, except render the screen. If we do not render the screen, it
      * will become glitchy, try yourself, may be fixed, and I didn't know.
      */
-    int inc_sel[6] = {0, -1, 1, 1, -1, 0};
+    const unsigned int inc_sel[6] = {0, -1, 1, 1, -1, 0};
+    unsigned short int resistances[2] = {0, 3};
+    int input;
     fputs("\033c", stdout); // Clear screen
     level0();
 
-    int input;
+    int input_num = 0;
     do {
-        input = getinput();
+        /* Resistance, this is how many time it is need to typed in a row for it
+         * to register as an input. We consume a spacific ammount of inputs. */
+        if (playerx < 0 || playerx >= mapx ||
+            playery < 1 || playery >= mapy)
+            player_resistance = 2; // Little resistance
+        else
+            player_resistance = 0; // No resistance
 
-        if (input == 5) {
-            /* TODO: Change new function escape, deturmines which during what
-             * level/stage --- ingame_get_menu(); ? */
-            menu();
+        // TODO remove need for counter.
+        /* if input_num is >= to resistance then, get the input, else, 0 */
+        input = (input_num >= player_resistance) ? getinput() : 0;
+
+        if (input == 0) {
+            fgetc(stdin); // Remove input from stdin
+            input_num++;
+        } else {
+            input_num = 0; // Set counter to zero
+
+            if (input == 5) menu();
+            else if (input > 2) playerx+=inc_sel[input];
+            else if (input <= 2) playery+=inc_sel[input];
         }
-
-        if (input > 2) {
-            playerx+=inc_sel[input];
-        } else if (input <= 2) {
-            playery+=inc_sel[input];
-        }
-
+        
         while (!kbhit()) { /* While no new inputs */
-            usleep(GAME_UPDATE_SPEED); /* Sleep in microseconds */
-            fputs("\033c", stdout);
             runlevel();
-            FRAMES_INCREMENT
+            FRAMES_INCREMENT // Some optional debug code.
+            usleep(GAME_UPDATE_SPEED); /* Sleep in microseconds */
         }
+
     } while (1);
 }
 
