@@ -1,7 +1,7 @@
 /** @file paex_sine.c
     @brief A game to play around with rendering types in c.
     @author prex-aliya
- */
+*/
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -36,17 +36,17 @@ short int getinput() {
          * keys numbers, so much smaller than if-else or switch */
         return getchar()-64;
     } else if (input == 119 || input == 107) {
-         return 1;
+        return 1;
     } else if (input == 114 || input == 106) {
-         return 2;
+        return 2;
     } else if (input == 115 || input == 108 ) {
-         return 3;
+        return 3;
     } else if (input == 97 || input == 104 ) {
-         return 4;
+        return 4;
     } else if (input == 113) {
-         return 0;
+        return 0;
     } else {
-         return 5;
+        return 5;
     }
 
     return 0;
@@ -54,7 +54,7 @@ short int getinput() {
 FUNCTION_DEBUG
 
 void td_lvl_mtn(int x, int y) {
-#define TD_MTN_OUT_VAR short int outy = (y/4)+(playery-7); \
+#define TD_MTN_OUT_VAR short int outy = (y/4)+(playery-7);  \
     short int outx = x+(playerx-7);
 #define TO4(c) c c c c
 #define PRINT_COLOR(color, print) printf(color TO4(print));
@@ -62,26 +62,26 @@ void td_lvl_mtn(int x, int y) {
 
     if (level == 0) {
         TD_MTN_OUT_VAR
-        if (outy == 0)
-            PRINT_COLOR(BYELLOW YELLOW, "  ")
-        else if (outx > 16 && outy >= -1)
-            PRINT_COLOR(BGREEN YELLOW, ".*")
-        else
-            PRINT_COLOR(GREEN, "~~") /* Trees */
+            if (outy == 0)
+                PRINT_COLOR(BYELLOW YELLOW, "  ")
+                else if (outx > 16 && outy >= -1)
+                    PRINT_COLOR(BGREEN YELLOW, ".*")
+                    else
+                        PRINT_COLOR(GREEN, "~~") /* Trees */
 
-    } else if (level == 1) {
+                            } else if (level == 1) {
         TD_MTN_OUT_VAR
-        if (outy <= -1 && outy >= -3) /* Trees */
-            PRINT_COLOR(GREEN, "~~")
-         else if ( outy == 1)
-            PRINT_COLOR(BYELLOW, "  ")
-         else if ( outx == 19 && !(outy <= 0))
-            PRINT_COLOR(BYELLOW, "  ")
-         else
-            PRINT_COLOR(BGREEN YELLOW, "/*")
+            if (outy <= -1 && outy >= -3) /* Trees */
+                PRINT_COLOR(GREEN, "~~")
+                else if ( outy == 1)
+                    PRINT_COLOR(BYELLOW, "  ")
+                    else if ( outx == 19 && !(outy <= 0))
+                        PRINT_COLOR(BYELLOW, "  ")
+                        else
+                            PRINT_COLOR(BGREEN YELLOW, "/*")
 
-    } else {
-            PRINT_COLOR(RED, "XX");
+                                } else {
+        PRINT_COLOR(RED, "XX");
     }
 }
 void td_ren(unsigned int x, unsigned int y, unsigned short int map[mapy][mapx]) {
@@ -101,14 +101,14 @@ void td_ren(unsigned int x, unsigned int y, unsigned short int map[mapy][mapx]) 
 #define TOP_TD_REN_TILES ERROR_TD_REN_TILES-1
             // For constant look up time; sacrificing storage for speed
             char tiles[7][12] = {
-                { BGREEN "  " },
-                { BYELLOW "  " },
-                { GREEN "//" },
-                { BBLUE "  " },
-                { BBLACK "||" },
-                { BRED "!!" },
-                { BBLACK "XX" }
-            };
+            { BGREEN "  " },
+            { BYELLOW "  " },
+            { GREEN "//" },
+            { BBLUE "  " },
+            { BBLACK "||" },
+            { BRED "!!" },
+            { BBLACK "XX" }
+        };
             /*
              * This is for computing the value of map at the current rendering
              * place, then used in a macro twice -in a macro to avoid over
@@ -116,8 +116,8 @@ void td_ren(unsigned int x, unsigned int y, unsigned short int map[mapy][mapx]) 
              * the correct range of values, if not error, if, then equal that
              * value.
              */
-#define TILE_LOC (map_value <= TOP_TD_REN_TILES) ? map_value : \
-        ERROR_TD_REN_TILES
+#define TILE_LOC (map_value <= TOP_TD_REN_TILES) ? map_value :  \
+            ERROR_TD_REN_TILES
 
             unsigned short int map_value =
                 map[(y/4)+(playery-4)][(x+(z/4))+(playerx-7)];
@@ -130,37 +130,37 @@ void render(unsigned short int map[mapy][mapx]) {
 
     PTOP
 
-    for (y=0; y<4*height; y++) {
-        printf(BWHITE "  " RESET); /* PRINT white boarder */
-        for (x=0; x<width; x++) {
+        for (y=0; y<4*height; y++) {
+            printf(BWHITE "  " RESET); /* PRINT white boarder */
+            for (x=0; x<width; x++) {
 
-            td_ren(x,y,map);
+                td_ren(x,y,map);
 
+            }
+            printf(BWHITE "  \n" RESET);
         }
-        printf(BWHITE "  \n" RESET);
-    }
 
 
     PTOP
-    printf(RESET "\n");
+        printf(RESET "\n");
 
     if (level == 0) { printf(RESET "GO TO CAR"); /* Level 1 Objective */
     } else if (level == 1) {printf(RESET "GO TO THE TOWER"); } /* Level 2 Objective */
 
     HOUSE_DEBUG
 
-    fputs("\n", stdout);
+        fputs("\n", stdout);
 }
 
 void printmenu(unsigned short int select) {
     fputs("\033c\n\n", stdout); /* Clear Screen + Shift Down */
 
     char print_item[4][20] = {
-        { "START" },
-        { "SAVE" },
-        { "SETTINGS" },
-        { "QUIT" }
-    };
+    { "START" },
+    { "SAVE" },
+    { "SETTINGS" },
+    { "QUIT" }
+};
 
     /*
      * 19, and 4, is less than because arrays start a 0.
@@ -181,34 +181,34 @@ void printmenu(unsigned short int select) {
 
     for (int i = 0; i < 4; i++)
         printf( RESET "\t\t%s\n", print_item[i] );
+    fflush(stdout);
 }
 void menu() {
     unsigned short int sel=0, input;
+    int inc_sel[3] = {0, -1, 1};
 
     do {
         printmenu(sel);
-        fflush(stdout);
 
         while (!kbhit()) { }
         input = getinput();
 
-        if (input == 1 && sel > 0) {
-            sel--;
-            BEEP
-        } else if (input == 2 && sel < 3) {
-            sel++;
-            BEEP
-        } else if (input == 0) { break;
+        if (input == 0) { finish();
         } else if (input == 5 || input == 3) {
             BEEP_SELECT
 
-            if (sel == 0) break;
-            else if (sel == 3) finish();
-        } else if (input == 6) finish();
-        else sel == 1;
+                if (sel == 0) break;
+                else if (sel == 4) finish();
+        } else sel == 1;
 
-        usleep(MENU_UPDATE_SPEED);
-        fputs("\033c", stdout); /* Clear Screen */
+        /* Dont know why but putting these two together makes it seg-fault,
+         * unknown reason for it happening.
+         */
+        sel += inc_sel[(input)];
+        sel = sel % 4;
+
+        BEEP
+            usleep(MENU_UPDATE_SPEED);
     } while (true);
 }
 
@@ -216,26 +216,26 @@ void menu() {
 void level2(){}
 void level1(){
     unsigned short int map[19][19]={
-        {2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2},
-        {2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2},
-        {2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {1,1,1,1,1,1,3,3,3,1,1,1,1,1,1,1,1,1,1},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,4,4,4,4,4,4,4,4,4,0,0,0,0,0},
-        {0,0,0,0,0,4,0,0,0,0,0,0,0,4,0,0,0,0,0},
-        {0,0,0,0,0,4,0,0,0,5,0,0,0,4,0,0,0,0,0},
-        {0,0,0,0,0,4,0,0,5,5,5,0,0,4,0,0,0,0,0},
-        {0,0,0,0,0,4,0,0,5,3,5,0,0,4,0,0,0,0,0},
-        {0,0,0,0,0,4,0,5,5,5,5,5,0,4,0,0,0,0,0},
-        {0,0,0,0,0,4,0,0,0,0,0,0,0,4,0,0,0,0,0},
-        {0,0,0,0,0,4,0,0,0,0,0,0,0,4,0,0,0,0,0},
-        {0,0,0,0,0,4,4,4,4,4,4,4,4,4,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1}
-    };
+    {2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2},
+    {2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2},
+    {2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2},
+    {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+    {1,1,1,1,1,1,3,3,3,1,1,1,1,1,1,1,1,1,1},
+    {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+    {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+    {0,0,0,0,0,4,4,4,4,4,4,4,4,4,0,0,0,0,0},
+    {0,0,0,0,0,4,0,0,0,0,0,0,0,4,0,0,0,0,0},
+    {0,0,0,0,0,4,0,0,0,5,0,0,0,4,0,0,0,0,0},
+    {0,0,0,0,0,4,0,0,5,5,5,0,0,4,0,0,0,0,0},
+    {0,0,0,0,0,4,0,0,5,3,5,0,0,4,0,0,0,0,0},
+    {0,0,0,0,0,4,0,5,5,5,5,5,0,4,0,0,0,0,0},
+    {0,0,0,0,0,4,0,0,0,0,0,0,0,4,0,0,0,0,0},
+    {0,0,0,0,0,4,0,0,0,0,0,0,0,4,0,0,0,0,0},
+    {0,0,0,0,0,4,4,4,4,4,4,4,4,4,0,0,0,0,0},
+    {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1},
+    {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1},
+    {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1}
+};
 
     mapx = 19;
     mapy = 19;
@@ -288,17 +288,17 @@ void level1(){
 }
 void level0(){
     unsigned short int map[10][20]={
-        {2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2},
-        {2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2},
-        {0,0,0,0,0,0,0,3,3,3,0,0,0,0,0,0,0,0,0,0},
-        {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
-    };
+    {2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2},
+    {2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2},
+    {0,0,0,0,0,0,0,3,3,3,0,0,0,0,0,0,0,0,0,0},
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+    {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+    {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+    {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+    {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+    {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+    {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
+};
 
     /* First Level Spacific */
     if (playerx == 8 && playery == 3) {
@@ -347,40 +347,41 @@ void runlevel() {
     else finish();
 }
 void gameplay() {
-    fputs("\033c", stdout);
+    /*
+     * This function is the main gameplay loop, we have an array that has if the
+     * player should increase location by -1, or 1, or none, for a constant look
+     * up time. Then if we should do x, or y. We do esc checking first so we
+     * dont have to expend extra cycles. And while no keyboard inputs, we do
+     * nothing, except render the screen. If we do not render the screen, it
+     * will become glitchy, try yourself, may be fixed, and I didn't know.
+     */
+    int inc_sel[6] = {0, -1, 1, 1, -1, 0};
+    fputs("\033c", stdout); // Clear screen
     level0();
 
     int input;
     do {
         input = getinput();
 
-        if (input == 1) {
-            if (playery <= 1) {
-            } else playery--;
-
-        } else if (input == 2) {
-            if (playery >= mapy-1+1) {
-            } else playery++;
-
-        } else if (input == 3) {
-            if (playerx >= mapx-1) {
-            } else playerx++;
-
-        } else if (input == 4) {
-            if (playerx <= 0) {
-            } else playerx--;
-
-        } else if (input == 6) {
-            /*
-            * TODO: Change new function escape, deturmines which during what
-            * level/stage
-            */
+        if (input == 5) {
+            /* TODO: Change new function escape, deturmines which during what
+             * level/stage --- ingame_get_menu(); ? */
             menu();
         }
 
-        while (!kbhit()) {
+        /* Negative X is missfunctional, remove view of non procedural parts, so
+         * not allowing anyone past for now. */
+
+        #define NEG_PLAYER_X && !(playerx+inc_sel[input] < 0)
+        if (input > 2 NEG_PLAYER_X) {
+            playerx+=inc_sel[input];
+        } else if (input <= 2) {
+            playery+=inc_sel[input];
+        }
+
+        while (!kbhit()) { /* While no new inputs */
             usleep(GAME_UPDATE_SPEED); /* Sleep in microseconds */
-            fputs("\033c", stdout);
+            Fputs("\033c", stdout);
             runlevel();
             FRAMES_INCREMENT
         }
@@ -388,10 +389,11 @@ void gameplay() {
 }
 
 int main() {
-    // https://stackoverflow.com/questions/448944/c-non-blocking-keyboard-input
 
-    BEEP BEEP BEEP
+    /* TODO: include ammount of times for beep */
+    BEEP BEEP BEEP;
 
+    /* Change Termios Settings/store settings. Mainly Magic */
     tcgetattr(STDIN_FILENO, &old_tio);
     new_tio = old_tio;
     new_tio.c_lflag &= (~ICANON & ~ECHO);
@@ -408,4 +410,7 @@ int main() {
  * - MULTITREADING
  *  ` First with Audio, to do in background for fast gameplay
  *   https://dev.to/quantumsheep/basics-of-multithreading-in-c-4pam
+ * - GLITCH
+ *  ` if moving rapidly in (unconfirmed) y, then stop then press going left or
+ *    right then will jump a space.
  */

@@ -1,11 +1,10 @@
-all:
-	cc -o diffkeygrab.out diffkeygrab.c
-	gcc -lm -o diffrender.out diffrender.c
+CC			= gcc
+FILENAME 	= main.c
 
-keygrab:
-	cc -o a.out diffkeygrab.c
-render:
-	gcc -o a.out diffrender.c -lm
+SDL_FLAGS	= -lSDL2
+FLAGS		= $(SDL_FLAGS)
 
+all: $(FILENAME)
+	$(CC) -o a.out $(FILENAME) $(FLAGS)
 test: all
 	./a.out
