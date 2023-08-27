@@ -381,7 +381,7 @@ void gameplay() {
 
         while (!kbhit()) { /* While no new inputs */
             usleep(GAME_UPDATE_SPEED); /* Sleep in microseconds */
-            Fputs("\033c", stdout);
+            fputs("\033c", stdout);
             runlevel();
             FRAMES_INCREMENT
         }
