@@ -1,5 +1,8 @@
-#include <stdbool.h>
-#include <stdlib.h> /* For NULL */
+#include <signal.h>
+#include <stdio.h>
+#include <stdlib.h> // For NULL
+#include <termios.h>
+#include <unistd.h>
 #include "../lib/paex_sine.c"
 
 /* GOOD TO HAVE */
@@ -71,6 +74,7 @@ int GAME_UPDATE_SPEED = 50000;
 unsigned short int level=0;
 FRAMES_ASSIGN
 
+/* These cannot be negative, since they are in for loops. */
 const unsigned int height=7;
 const unsigned int width=15;
 unsigned short int mapx=20;
@@ -78,7 +82,7 @@ unsigned short int mapy=10;
 
 int playerx=8;
 int playery=4;
-unsigned int player_resistance = 1;
+unsigned int player_resistance = 1; // Cannot be negative
 bool playermove=true;
 bool playerview=true;
 //unsigned short int slept=0; /* How Many Deaths */
