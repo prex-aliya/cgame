@@ -23,7 +23,7 @@ void finish() {
 }
 
 /* MISC/INPUT */
-short int getinput() {
+int getinput() {
     /* NOTE:
      * 1 = up
      * 2 = down
@@ -31,7 +31,7 @@ short int getinput() {
      * 4 = left
      */
 
-    unsigned short int value;
+    unsigned int value;
     char input = fgetc(stdin);
     if (input == 27) {
         fgetc(stdin); /* Skip the ^[ for arrow keys */
@@ -58,8 +58,8 @@ FUNCTION_DEBUG
 
 /* RENDERING */
 void td_lvl_mtn(int x, int y) {
-#define TD_MTN_OUT_VAR short int outy = (y/4)+(playery-7);  \
-    short int outx = x+(playerx-7);
+#define TD_MTN_OUT_VAR int outy = (y/4)+(playery-7);  \
+    int outx = x+(playerx-7);
 #define TO4(c) c c c c
 #define PRINT_COLOR(color, print) printf(color TO4(print));
 
@@ -88,7 +88,7 @@ void td_lvl_mtn(int x, int y) {
         PRINT_COLOR(RED, "XX");
     }
 }
-void td_ren(unsigned int x, unsigned int y, unsigned short int map[mapy][mapx]) {
+void td_ren(unsigned int x, unsigned int y, int map[mapy][mapx]) {
     if (x == 7 && y/4 == 3 && playerview == true) { /* render player */
         if (y-((y/4)*4) < 2)
             printf(BBLACK TO4("  ") RESET);
@@ -123,14 +123,15 @@ void td_ren(unsigned int x, unsigned int y, unsigned short int map[mapy][mapx]) 
             #define TILE_LOC (map_value <= TOP_TD_REN_TILES) ? map_value :  \
             ERROR_TD_REN_TILES
 
-            unsigned short int map_value =
+            unsigned int map_value =
                 map[(y/4)+(playery-4)][(x+(z/4))+(playerx-7)];
             printf(RESET "%s" RESET, tiles[TILE_LOC]);
         }
     }
 }
-void render(unsigned short int map[mapy][mapx]) {
+void render(int map[mapy][mapx]) {
     register unsigned int x,y;
+    // Never need negative in arrays, since all tiles will be in arrays.
 
     PTOP
 
@@ -157,7 +158,7 @@ void render(unsigned short int map[mapy][mapx]) {
 }
 
 /* MENU */
-void printmenu(unsigned short int select) {
+void printmenu(int select) {
     fputs("\033c\n\n", stdout); /* Clear Screen + Shift Down */
 
     char print_item[4][20] = {
@@ -189,7 +190,7 @@ void printmenu(unsigned short int select) {
     fflush(stdout);
 }
 void menu() {
-    unsigned short int sel=0, input;
+    int sel=0, input;
     int inc_sel[3] = {0, -1, 1};
 
     do {
@@ -220,7 +221,7 @@ void menu() {
 /* More Front End, more code, for the astetics. */
 void level2() {}
 void level1() {
-    unsigned short int map[19][19]={
+    int map[19][19]={
     {2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2},
     {2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2},
     {2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2},
@@ -264,7 +265,7 @@ void level1() {
         fputs("\033c", stdout);
         level = 1;
         render(map);
-        for (short int i=-1; i!=7; i++) {
+        for (register int i=-1; i!=7; i++) {
             map[4][i-1] = 1;
             map[4][i]   = 3;
             map[4][i+1] = 3;
@@ -293,7 +294,7 @@ void level1() {
 }
 void level05() {} // TODO: increase the cutscene to include going down the road
 void level0() {
-    unsigned short int map[10][20]={
+    int map[10][20]={
     {2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2},
     {2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2},
     {0,0,0,0,0,0,0,3,3,3,0,0,0,0,0,0,0,0,0,0},
@@ -331,7 +332,7 @@ void level0() {
         map[2][9]  = 0;
         map[2][10] = 0;
 
-        for (short int i=9; i<17; i++) {
+        for (int i=9; i<17; i++) {
             map[3][i-1] = 1;
             map[3][i]   = 3;
             map[3][i+1] = 3;
@@ -349,7 +350,7 @@ void level0() {
         render(map);
     }
 }
-/* The Drivers of the Game */
+/* Drivers The Game */
 void runlevel() {
     fputs("\033c", stdout);
     /* Run the Level */
@@ -369,7 +370,7 @@ void gameplay() {
      * will become glitchy, try yourself, may be fixed, and I didn't know.
      */
     const unsigned int inc_sel[6] = {0, -1, 1, 1, -1, 0};
-    unsigned short int resistances[2] = {0, 3};
+    unsigned int resistances[2] = {0, 3};
     int input;
     fputs("\033c", stdout); // Clear screen
     level0();

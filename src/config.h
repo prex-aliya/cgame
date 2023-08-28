@@ -2,9 +2,7 @@
 #include <stdlib.h> /* For NULL */
 #include "../lib/paex_sine.c"
 
-/* TODO: test if their is a way to have theis macros be right next to each other
- * without a space, so "START BBLACK GREEN END" would be, \x1b[40;32m", I wonder.
- */
+/* GOOD TO HAVE */
 
 /* COLORS */
 #define BLACK    "\x1b[30m"
@@ -80,11 +78,11 @@ unsigned short int mapy=10;
 
 int playerx=8;
 int playery=4;
-unsigned short int player_resistance = 1;
+unsigned int player_resistance = 1;
 bool playermove=true;
 bool playerview=true;
-
-unsigned short int slept=0; /* How Many Deaths */
+//unsigned short int slept=0; /* How Many Deaths */
+//
 
 
 /* Magic */
@@ -95,6 +93,3 @@ int kbhit() {
     FD_SET(0, &fds);
     return select(1, &fds, NULL, NULL, &tv) > 0;
 }
-
-/* https://stackoverflow.com/questions/5488377/converting-an-integer-to-binary-in-c
-   More Magic */
