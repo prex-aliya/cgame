@@ -2,11 +2,6 @@
     @brief A game to play around with rendering types in c.
     @author prex-aliya
 */
-#include <signal.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <termios.h>
-#include <unistd.h>
 #include "config.h"
 
 /* NOTE: recursave functions are not part of the standard c language */
