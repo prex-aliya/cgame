@@ -1,17 +1,22 @@
-/** @file main.c
-    @brief A game to play around with rendering types in c.
-    @author prex-aliya
-*/
-#include "config.h"
+/** \file main.c
+ ** \author prex-aliya
+ ** \breif A simple game, for playing around with rendering in pure c.
+ **
+ ** This is a project, for a small story that I have been thinking about for
+ ** some time now, and a experiment. This technically be made into a game
+ ** engine, since the functions for the actual game part are seperated from the
+ ** rendering functions. Reuseability will be key in this project.
+ **/
+
+#include "main.h"
 
 /* NOTE: recursave functions are not part of the standard c language */
-struct termios old_tio, new_tio;
-
 
 /* TOP LEVEL FUNCTIONS: used to exit, need to be available everywhere. */
+struct termios old_tio, new_tio;
 int sig_caught=0;
 void signal_handler(int sig) {if (sig == SIGINT) {sig_caught=1;}}
-void finish() {
+void exit_game() {
     tcsetattr(STDIN_FILENO, TCSANOW, &old_tio); /* restore former settings */
     printf("\x1b[0m");
     exit(0);
@@ -26,7 +31,6 @@ int getinput() {
      * 4 = left
      */
 
-    unsigned int value;
     char input = fgetc(stdin);
     if (input == 27) {
         fgetc(stdin); /* Skip the ^[ for arrow keys */
@@ -51,9 +55,8 @@ int getinput() {
 }
 FUNCTION_DEBUG
 
-/* RENDERING */
 void td_lvl_mtn(int x, int y) {
-#define TD_MTN_OUT_VAR int outy = (y/4)+(playery-7);  \
+#define TD_MTN_OUT_VAR int outy = (y/4)+(playery-7);    \
     int outx = x+(playerx-7);
 #define TO4(c) c c c c
 #define PRINT_COLOR(color, print) printf(color TO4(print));
@@ -152,7 +155,6 @@ void render(int map[mapy][mapx]) {
         fputs("\n", stdout);
 }
 
-/* MENU */
 void printmenu(int select) {
     fputs("\033c\n\n", stdout); /* Clear Screen + Shift Down */
 
@@ -185,7 +187,8 @@ void printmenu(int select) {
     fflush(stdout);
 }
 void menu() {
-    int sel=0, input;
+    // Must not be negative, or arrays will make a segfault.
+    unsigned int sel=0, input;
     int inc_sel[3] = {0, -1, 1};
 
     do {
@@ -194,13 +197,14 @@ void menu() {
         while (!kbhit()) { }
         input = getinput();
 
-        if (input == 0) { finish();
+        if (input == 0) { exit_game();
         } else if (input == 5 || input == 3) {
             BEEP_SELECT
 
                 if (sel == 0) break;
-                else if (sel == 4) finish();
+                else if (sel == 4) exit_game();
         } else sel == 1;
+
 
         /* Dont know why but putting these two together makes it seg-fault,
          * unknown reason for it happening.
@@ -213,147 +217,168 @@ void menu() {
     } while (true);
 }
 
-/* More Front End, more code, for the astetics. */
-void level2() {}
+void level2() {
+    exit_game();
+}
 void level1() {
-    int map[19][19]={
-    {2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2},
-    {2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2},
-    {2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2},
-    {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    {1,1,1,1,1,1,3,3,3,1,1,1,1,1,1,1,1,1,1},
-    {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    {0,0,0,0,0,4,4,4,4,4,4,4,4,4,0,0,0,0,0},
-    {0,0,0,0,0,4,0,0,0,0,0,0,0,4,0,0,0,0,0},
-    {0,0,0,0,0,4,0,0,0,5,0,0,0,4,0,0,0,0,0},
-    {0,0,0,0,0,4,0,0,5,5,5,0,0,4,0,0,0,0,0},
-    {0,0,0,0,0,4,0,0,5,3,5,0,0,4,0,0,0,0,0},
-    {0,0,0,0,0,4,0,5,5,5,5,5,0,4,0,0,0,0,0},
-    {0,0,0,0,0,4,0,0,0,0,0,0,0,4,0,0,0,0,0},
-    {0,0,0,0,0,4,0,0,0,0,0,0,0,4,0,0,0,0,0},
-    {0,0,0,0,0,4,4,4,4,4,4,4,4,4,0,0,0,0,0},
-    {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1},
-    {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1},
-    {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1}
-};
+    int map[19][19] = {
+        {2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2},
+        {2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2},
+        {2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+        {1,1,1,1,1,1,3,3,3,1,1,1,1,1,1,1,1,1,1},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,4,4,4,4,4,4,4,4,4,0,0,0,0,0},
+        {0,0,0,0,0,4,0,0,0,0,0,0,0,4,0,0,0,0,0},
+        {0,0,0,0,0,4,0,0,0,5,0,0,0,4,0,0,0,0,0},
+        {0,0,0,0,0,4,0,0,5,5,5,0,0,4,0,0,0,0,0},
+        {0,0,0,0,0,4,0,0,5,3,5,0,0,4,0,0,0,0,0},
+        {0,0,0,0,0,4,0,5,5,5,5,5,0,4,0,0,0,0,0},
+        {0,0,0,0,0,4,0,0,0,0,0,0,0,4,0,0,0,0,0},
+        {0,0,0,0,0,4,0,0,0,0,0,0,0,4,0,0,0,0,0},
+        {0,0,0,0,0,4,4,4,4,4,4,4,4,4,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1}
+    };
 
-    mapx = 19;
-    mapy = 19;
+    mapx = mapy = 19;
 
     if (playerx == 9 && playery == 12) {
         BEEPL(2);
         playermove = false;
         playerview = false;
-        level += 1;
+        level = 2;
         level2();
-        return;
     }
 
-    if (playermove == true) {
-        render(map);
-    } else {
-        map[4][6] = 1;
-        map[4][7] = 1;
-        map[4][8] = 1;
-
-        fputs("\033c", stdout);
-        level = 1;
-        render(map);
-        for (register int i=-1; i!=7; i++) {
-            map[4][i-1] = 1;
-            map[4][i]   = 3;
-            map[4][i+1] = 3;
-            map[4][i+2] = 3;
-
-            if (i>=5) {
-                usleep(700000);
-            } else if (i>=4) {
-                usleep(500000);
-            } else {
-                usleep(400000); /* sleep in microseconds */
-            }
-
-            fputs("\033c", stdout);
-            render(map);
-        }
-
-        sleep(1);
-        mapx=16;
-        mapy=16;
-        playerx=7;
-        playery=6;
-        playermove=true;
-        playerview=true;
-    }
+    render(map);
 }
-void level05() {} // TODO: increase the cutscene to include going down the road
+void level0_car_cutscene(int map[10][20]) {
+//void level0_walk_cutscene() {} // TODO: cutscene for going down the road
+    // Move car forward 1
+    map[2][7]  = 0;
+    map[2][10] = 3;
+
+    fputs("\033c", stdout); // Clear
+    render(map); // Rerender screen
+
+    sleep(1);
+    // Remove car from parking spot
+    map[2][8]  = 0;
+    map[2][9]  = 0;
+    map[2][10] = 0;
+
+    // Move car down the street
+    for (int i=9; i<17; i++) {
+        map[3][i-1] = 1;
+        map[3][i]   = 3;
+        map[3][i+1] = 3;
+        map[3][i+2] = 3;
+
+        usleep(2000); /* sleep in microseconds */
+        fputs("\033c", stdout);
+        render(map);
+
+        usleep(500000);
+    }
+
+    level1();
+
+    int level1[19][19] = {
+        {2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2},
+        {2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2},
+        {2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+        {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,4,4,4,4,4,4,4,4,4,0,0,0,0,0},
+        {0,0,0,0,0,4,0,0,0,0,0,0,0,4,0,0,0,0,0},
+        {0,0,0,0,0,4,0,0,0,5,0,0,0,4,0,0,0,0,0},
+        {0,0,0,0,0,4,0,0,5,5,5,0,0,4,0,0,0,0,0},
+        {0,0,0,0,0,4,0,0,5,3,5,0,0,4,0,0,0,0,0},
+        {0,0,0,0,0,4,0,5,5,5,5,5,0,4,0,0,0,0,0},
+        {0,0,0,0,0,4,0,0,0,0,0,0,0,4,0,0,0,0,0},
+        {0,0,0,0,0,4,0,0,0,0,0,0,0,4,0,0,0,0,0},
+        {0,0,0,0,0,4,4,4,4,4,4,4,4,4,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1}
+    };
+
+    fputs("\033c", stdout);
+    level = 1;
+    render(level1);
+    for (register int i=-1; i!=7; i++) {
+        level1[4][i-1] = 1;
+        level1[4][i]   = 3;
+        level1[4][i+1] = 3;
+        level1[4][i+2] = 3;
+
+        if (i>=5)
+            usleep(700000);
+         else if (i>=4)
+            usleep(500000);
+         else
+            usleep(400000); /* sleep in microseconds */
+
+        fputs("\033c", stdout); // Clear screen
+        render(level1);
+    }
+
+    sleep(1);
+    mapx=16;
+    mapy=16;
+    playerx=7;
+    playery=6;
+    playermove=true;
+    playerview=true;
+}
 void level0() {
     int map[10][20]={
-    {2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2},
-    {2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2},
-    {0,0,0,0,0,0,0,3,3,3,0,0,0,0,0,0,0,0,0,0},
-    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-    {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
-};
+        {2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2},
+        {2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2},
+        {0,0,0,0,0,0,0,3,3,3,0,0,0,0,0,0,0,0,0,0},
+        {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
+    };
 
-    /* First Level Spacific */
     if (playerx == 8 && playery == 3) {
         BEEPL(2);
-        playermove = false;
-        playerview = false;
-    } else if (playerx >= 1000) {
+        playermove = playerview = false;
+        level0_car_cutscene(map);
+    } else if (playerx >= 1023) {
         /* If follow road long enough, start next level */
-        BEEPL(2);
-        playermove = false;
-        playerview = false;
+        BEEPL(3);
+        playermove = playerview = false;
         playerx = 8; playery = 3;
         level1();
-    } else if (playermove == false) {
-        /* TODO: fix screen tearing */
-        map[2][7]  = 0;
-        map[2][10] = 3;
-
-        fputs("\033c", stdout);
+    } else
         render(map);
 
-        sleep(1);
-        map[2][8]  = 0;
-        map[2][9]  = 0;
-        map[2][10] = 0;
-
-        for (int i=9; i<17; i++) {
-            map[3][i-1] = 1;
-            map[3][i]   = 3;
-            map[3][i+1] = 3;
-            map[3][i+2] = 3;
-
-            usleep(2000); /* sleep in microseconds */
-            fputs("\033c", stdout);
-            render(map);
-
-            usleep(500000);
-        }
-
-        level1();
-    } else {
-        render(map);
-    }
 }
-/* Drivers The Game */
+
 void runlevel() {
     fputs("\033c", stdout);
     /* Run the Level */
     /* TODO must be constant speed solution? */
-    if (level == 0) level0();
-    else if (level == 1) level1();
-    else if (level == 2) level2();
-    else finish();
+    switch (level) {
+        case 0: level0(); break;
+        case 1: level1(); break;
+        case 2: level2(); break;
+        default: exit_game();
+    }
+    //if (level == 0) level0();
+    //else if (level == 1) level1();
+    //else if (level == 2) level2();
+    //else exit_game();
 }
 void gameplay() {
     /*
@@ -419,7 +444,7 @@ int main() {
     gameplay();
 
     /* EXIT */
-    finish();
+    exit_game();
 }
 
 /* TODO:
@@ -429,4 +454,6 @@ int main() {
  * - GLITCH
  *  ` if moving rapidly in (unconfirmed) y, then stop then press going left or
  *    right then will jump a space.
+ * TODO: move non config values to other file main.h?
+ * TODO: rewrite paex_sine.c
  */

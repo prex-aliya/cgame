@@ -21,7 +21,10 @@ BINNAME	= a.out
 BIND	= ./bin/$(BINNAME)
 
 SRCD	= ./src
-SRC		= $(SRCD)/main.c
+SRCM	= $(SRCD)/main.c
+SRCG	= $(SRCD)/gamelevels.c
+SRCR	= $(SRCD)/render.c
+SRC		= $(SRCM)
 
 all: compile options
 	@echo Finished Building $(NAME) v$(VER)

@@ -4,9 +4,9 @@
 #include <stdlib.h> // For NULL
 #include <termios.h>
 #include <unistd.h>
-#include "../lib/paex_sine.c"
+#include "sound.c"
 
-/* GOOD TO HAVE */
+
 
 /* COLORS */
 #define BLACK    "\x1b[30m"
@@ -29,23 +29,14 @@
 
 #define RESET    "\x1b[0m"
 
+
 /* BOARDER PRINT */
 #define BOARDER_CHAR "                                                                                                                            "
 #define PTOP printf(BWHITE BOARDER_CHAR RESET); \
   fputs("\n", stdout);
 
-/* UPDATE SPEEDS */
-int GAME_UPDATE_SPEED = 50000;
-#define MENU_UPDATE_SPEED 40000
-
 /* MENU */
 #define MENU_LENGTH 4
-
-/* AUDIO */
-#define SAMPLE_LENGTH 44500
-#define BEEP sine(60, SAMPLE_LENGTH);
-#define BEEP_SELECT sine(100, 46000);
-#define BEEPL(len) sine((len)*100, SAMPLE_LENGTH);
 
 
 /* DEBUG */
@@ -60,6 +51,7 @@ int GAME_UPDATE_SPEED = 50000;
     }
 #define FRAMES_ASSIGN unsigned int frames=1;
 #define FRAMES_INCREMENT frames+=1;
+#define AUDIO_ERR_COUNTER unsigned int audio_err_count=0;
 
 #else
 
@@ -67,13 +59,29 @@ int GAME_UPDATE_SPEED = 50000;
 #define FUNCTION_DEBUG
 #define FRAMES_ASSIGN
 #define FRAMES_INCREMENT
+#define AUDIO_ERR_COUNTER
 #endif
 
+FRAMES_ASSIGN // define frames counter variable if debug
 
 
+/* AUDIO */
+AUDIO_ERR_COUNTER;
+#define NORMAL_SAMPLE_LENGTH 44500
+#define HIGH_SAMPLE_LENGTH 46000
+#define BEEP default_sine();
+#define BEEP_SELECT sine(100, HIGH_SAMPLE_LENGTH);
+#define BEEPL(len) sine((len)*100, NORMAL_SAMPLE_LENGTH);
 
-unsigned short int level=0;
-FRAMES_ASSIGN
+/* UPDATE SPEEDS */
+#define GAME_UPDATE_SPEED 40000
+#define MENU_UPDATE_SPEED 50000
+
+bool playermove=true;
+bool playerview=true;
+
+
+unsigned short int level=0; // No negative levels.
 
 /* These cannot be negative, since they are in for loops. */
 const unsigned int height=7;
@@ -84,13 +92,9 @@ unsigned short int mapy=10;
 int playerx=8;
 int playery=4;
 unsigned int player_resistance = 1; // Cannot be negative
-bool playermove=true;
-bool playerview=true;
-//unsigned short int slept=0; /* How Many Deaths */
-//
 
 
-/* Magic */
+/* Magic: a replica of the kbhit function on windows */
 int kbhit() {
     struct timeval tv = { 0L, 0L };
     fd_set fds;
