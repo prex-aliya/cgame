@@ -55,24 +55,19 @@
 
 
 /* DEBUG */
-#define DEBUG_ENABLED false
+#define DEBUG_ENABLED true
 #if DEBUG_ENABLED
 
-#define FRAMES_ASSIGN unsigned int frames=1;
-#define FRAMES_INCREMENT frames+=1;
-#define AUDIO_ERR_COUNTER unsigned int audio_err_count=0;
+unsigned int frames=1; // Init variable for frames
+#define FRAMES_INCREMENT frames+=1
 
 #else
-#define FRAMES_ASSIGN
 #define FRAMES_INCREMENT
-#define AUDIO_ERR_COUNTER
 #endif
 
-FRAMES_ASSIGN // define frames counter variable if debug
 
 
 /* AUDIO */
-AUDIO_ERR_COUNTER
 #define NORMAL_SAMPLE_LENGTH 44500
 #define HIGH_SAMPLE_LENGTH 46000
 #define BEEP default_sine();
@@ -86,7 +81,7 @@ AUDIO_ERR_COUNTER
 bool playermove=true;
 bool playerview=true;
 
-
+// TODO MOVE TO CONFIG.h
 unsigned short int level=0; // No negative levels.
 
 /* These cannot be negative, since they are in for loops. */
@@ -97,7 +92,6 @@ unsigned short int mapy=10;
 
 int playerx=8;
 int playery=4;
-unsigned int player_resistance = 1; // Cannot be negative
 
 
 /* Magic: a replica of the kbhit function on windows */

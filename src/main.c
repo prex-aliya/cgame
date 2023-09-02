@@ -21,6 +21,7 @@ void signal_handler(int sig) {
 }
 void exit_game() {
   tcsetattr(STDIN_FILENO, TCSANOW, &old_tio); /* restore former settings */
+  printf("\x1b[0m");
   exit(0);
 }
 
@@ -33,12 +34,12 @@ short int getinput() {
      * 4 = left
      */
 
-    char input = getchar();
+    char input = fgetc(stdin);
     if (input == 27) {
         getchar(); /* Skip the ^[ for arrow keys */
         /* The return values are equivilent to subtracting 64 from the input
          * keys numbers, so much smaller than if-else or switch */
-        return getchar()-64;
+        return fgetc(stdin)-64;
     } else if (input == 119 || input == 107) {
         return 1;
     } else if (input == 114 || input == 106) {
@@ -152,12 +153,12 @@ void render(int map[mapy][mapx]) {
   else if (level == 1)
     printf(RESET "GO TO THE TOWER"); /* Level 2 Objective */
 
-//#if (DEBUG_ENABLED)
-//  printf("\n(%d, %d)",playerx, playery);
-//  printf("\npmove: %d, pview: %d",playermove, playerview);
-//  printf("\nxmap: %d, ymap: %d",mapx, mapy);
-//  printf("\nframes: %d, level: %d",frames, level+1);
-//#endif
+#if (DEBUG_ENABLED)
+  printf("\n(%d, %d)",playerx, playery);
+  printf("\npmove: %d, pview: %d",playermove, playerview);
+  printf("\nxmap: %d, ymap: %d",mapx, mapy);
+  printf("\nframes: %d, level: %d",frames, level+1);
+#endif
 
   fputs("\n", stdout);
 }
@@ -210,8 +211,10 @@ void menu() {
       BEEP_SELECT;
 
       if (sel == 0) break;
-      else if (sel == 4) exit_game();
-    } else sel = 1;
+      //else if (sel == 1)
+      //else if (sel == 2)
+      else if (sel == 3) exit_game();
+    } //else sel = 1; NOTE: Apparently this breaks everything
 
 
     /* Dont know why but putting these two together makes it seg-fault,
@@ -396,10 +399,10 @@ void gameplay() {
    * will become glitchy, try yourself, may be fixed, and I didn't know.
    */
   const unsigned int inc_sel[6] = {0, -1, 1, 1, -1, 0};
-  //unsigned int resistances[2] = {0, 3};
+  unsigned int player_resistance = 0; // Cannot be negative
   int input;
   fputs("\033c", stdout); // Clear screen
-  level0();
+  runlevel();
 
   int input_num = 0;
   do {
@@ -410,6 +413,7 @@ void gameplay() {
       player_resistance = 2; // Little resistance
     else
       player_resistance = 0; // No resistance
+
 
     // TODO remove need for counter.
     /* if input_num is >= to resistance then, get the input, else, 0 */
@@ -426,8 +430,9 @@ void gameplay() {
       else if (input <= 2) playery+=inc_sel[input];
     }
 
-    int i = 0;
-    while (!kbhit() && i > 100) { /* While no new inputs */
+
+    //int i = 0; TODO: add limit
+    while (!kbhit()) { /* While no new inputs */
       runlevel();
       usleep(GAME_UPDATE_SPEED); /* Sleep in microseconds */
       FRAMES_INCREMENT; // Some optional debug code.
@@ -438,7 +443,6 @@ void gameplay() {
 
 /*** MAIN ***/
 int main() {
-
     /* TODO: include ammount of times for beep */
     BEEP BEEP BEEP;
 
@@ -455,13 +459,13 @@ int main() {
     exit_game();
 }
 
-/* TODO:
- * - MULTITREADING
- *  ` First with Audio, to do in background for fast gameplay
+/* TODO: MULTITREADING
+ *  ` First with Audio, to do in background for fast gameplay + sound
  *   https://dev.to/quantumsheep/basics-of-multithreading-in-c-4pam
- * - GLITCH
- *  ` if moving rapidly in (unconfirmed) y, then stop then press going left or
- *    right then will jump a space.
- * TODO: move non config values to other file main.h?
- * TODO: rewrite paex_sine.c
+ * TODO: move actual config values to config.h
+ * TODO: menu settings?
+ *
+ * >SETTINGS \t SOMETHING ONE
+ * QUIT      \t SOMETHING 2
+ *       \t\t\t SOMETHING 3
  */
