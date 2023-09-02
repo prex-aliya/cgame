@@ -1,9 +1,10 @@
 NAME 	= cGAME
-VER		= 0.0.5
+VER		= 0.0.6
 # 		  ^ ^ ^- PATCH, spelling, small update.
 #		  | +--- MINOR, fatel bugs, etc.
 #		  +----- MAJOR, updates, Minor features, etc.
 # Semantic Versioning: https://semver.org/
+# v1.0.0 will be offical release.
 
 # Compiler and Linker
 CC		= gcc
@@ -11,7 +12,8 @@ CC		= gcc
 OPP		= -Ofast
 SOUND	= -lrt -lm
 THREAD	= -lpthread
-CFLAGS	= $(OPP) $(THREAD) $(SOUND)
+WARN	= -Wall -Werror -Wpedantic
+CFLAGS	= $(WARN) $(OPP) $(THREAD) $(SOUND)
 
 LIBD	= ./lib
 PTAUDIO	= $(LIBD)/libportaudio.a

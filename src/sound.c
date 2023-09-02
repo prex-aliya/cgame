@@ -59,7 +59,7 @@ static int patestCallback( const void *inputBuffer, void *outputBuffer,
 
 /* This is called when playback is done */
 static void StreamFinished (void* userData) {
-    paTestData *data = (paTestData *) userData;
+    // paTestData *data = (paTestData *) userData;
     // "AUDIO: Stream Completed: %s" data->message
     // TODO: implement logging system.
 }
@@ -142,4 +142,7 @@ error:
     return err;
 }
 
-int default_sine() { sine(100, 35000); }
+int default_sine() {
+    sine(100, 35000);
+    return 0;
+}

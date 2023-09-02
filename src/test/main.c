@@ -25,7 +25,7 @@ int main(int argc, char *argv[]) {
     SDL_SetWindowTitle(Window, "WIN");
     SDL_ShowWindow(Window);
     SDL_SetWindowPosition(Window, SDL_WINDOWPOS_CENTERED,
-    SDL_WINDOWPOS_CENTERED);
+                          SDL_WINDOWPOS_CENTERED);
 
 
     Uint32 black = SDL_MapRGB(screen->format, 133, 133, 133);

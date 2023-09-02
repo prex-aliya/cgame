@@ -1,11 +1,23 @@
+/** \file main.h
+ ** \author prex-aliya
+ ** \breif storage for macros, and arguments for main.c
+ **
+ ** This is a blood mess of a header file, has all includes as well. Also where
+ ** the length debug macros live, designed to be removable from the code, to not
+ ** impact performance at all. Usally this is where the ugly part of making
+ ** things fast are, or functions I have no Idea how they work, and will learn
+ ** some day, maybe.
+ **/
+
 #include <signal.h>
 #include <stdio.h>
+#include <time.h>
+#include <stdarg.h>
 #include <stdbool.h>
 #include <stdlib.h> // For NULL
 #include <termios.h>
 #include <unistd.h>
 #include "sound.c"
-
 
 
 /* COLORS */
@@ -30,33 +42,27 @@
 #define RESET    "\x1b[0m"
 
 
+/* LOG */
+#define LOG_FILE "cgame.log"
+
 /* BOARDER PRINT */
 #define BOARDER_CHAR "                                                                                                                            "
 #define PTOP printf(BWHITE BOARDER_CHAR RESET); \
-  fputs("\n", stdout);
+    fputs("\n", stdout);
 
 /* MENU */
 #define MENU_LENGTH 4
 
 
 /* DEBUG */
-#define DEBUG true
-#if DEBUG
-#define HOUSE_DEBUG debug();
-#define FUNCTION_DEBUG void debug() {                               \
-        printf("\n(%d, %d)",playerx, playery);                      \
-        printf("\npmove: %d, pview: %d",playermove, playerview);    \
-        printf("\nxmap: %d, ymap: %d",mapx, mapy);                  \
-        printf("\nframes: %d, level: %d",frames, level+1);          \
-    }
+#define DEBUG_ENABLED false
+#if DEBUG_ENABLED
+
 #define FRAMES_ASSIGN unsigned int frames=1;
 #define FRAMES_INCREMENT frames+=1;
 #define AUDIO_ERR_COUNTER unsigned int audio_err_count=0;
 
 #else
-
-#define HOUSE_DEBUG
-#define FUNCTION_DEBUG
 #define FRAMES_ASSIGN
 #define FRAMES_INCREMENT
 #define AUDIO_ERR_COUNTER
@@ -66,7 +72,7 @@ FRAMES_ASSIGN // define frames counter variable if debug
 
 
 /* AUDIO */
-AUDIO_ERR_COUNTER;
+AUDIO_ERR_COUNTER
 #define NORMAL_SAMPLE_LENGTH 44500
 #define HIGH_SAMPLE_LENGTH 46000
 #define BEEP default_sine();
@@ -84,7 +90,7 @@ bool playerview=true;
 unsigned short int level=0; // No negative levels.
 
 /* These cannot be negative, since they are in for loops. */
-const unsigned int height=7;
+const unsigned int height=7; // TODO: make this be able to move
 const unsigned int width=15;
 unsigned short int mapx=20;
 unsigned short int mapy=10;
