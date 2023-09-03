@@ -66,11 +66,12 @@ void second_menu(int sel, char print_item[4][20]) {
     { "OPTION3\t" },
     { "OPTION4\t" }
   };
-  int input, second=0;
+  int input, second=0, layer=1;
 
   while(1) {
     fputs("\n\n", stdout);
-    printmenu(second, 4, print_settings);
+    for (int i=0; i<layer; i++)
+      printmenu(second, 4, print_settings);
     usleep(50000);
 
 
@@ -78,6 +79,7 @@ void second_menu(int sel, char print_item[4][20]) {
     input = getinput();
 
     if (input == 5 || input == 3) {
+      layer++;
     } else if (input == 4) {
       break;
     } else { /* TODO: if 4? */
