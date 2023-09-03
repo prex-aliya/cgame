@@ -1,0 +1,17 @@
+update to v0..7 menu overhall, add confirmation message
+
+Confirmation, YES/NO, on save or return to reality.
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+#
+# On branch main
+# Your branch is ahead of 'origin/main' by 1 commit.
+#   (use "git push" to publish your local commits)
+#
+# Changes to be committed:
+#	modified:   Makefile
+#	modified:   src/main.c
+#	modified:   src/main.h
+#	modified:   src/test/menu.c
+#	modified:   src/test/test.c
+#

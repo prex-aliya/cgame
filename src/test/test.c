@@ -55,36 +55,63 @@ void printmenu(int menu, int length, char print_item[length][20]) {
   }
 
   fflush(stdout);
+  fputs("\n\n", stdout);
   return;
 }
 
 void second_menu(int sel, char print_item[4][20]) {
   int inc_sel[3] = {0, -1, 1};
-  char print_settings[4][20] = {
-    { "OPTION1\t" },
-    { "OPTION2\t" },
-    { "OPTION3\t" },
-    { "OPTION4\t" }
-  };
-  int input, second=0, layer=1;
+  char print_settings[4][4][20] = {
+    {
+      { "OPTION1\t" },
+      { "OPTION2\t" },
+      { "OPTION3\t" },
+      { "OPTION4\t" }
+    },
+    {
+      { "OPTION5\t" },
+      { "OPTION6\t" },
+      { "OPTION7\t" },
+      { "OPTION8\t" }
+    },
+    {
+      { "OPTION9\t" },
+      { "OPTION10\t" },
+      { "OPTION11\t" },
+      { "OPTION12\t" }
+    },
+    {
+      { "OPTION13\t" },
+      { "OPTION14\t" },
+      { "OPTION15\t" },
+      { "OPTION16\t" }
+    }};
+  int input, layer=0;
+  int second[4] = {0, 1};
 
   while(1) {
     fputs("\n\n", stdout);
-    for (int i=0; i<layer; i++)
-      printmenu(second, 4, print_settings);
+    for (int i=0; i<=layer; i++) {
+      if (i==layer) {
+        printmenu(second[i], 4, print_settings[i]);
+      } else
+        printmenu(second[i], 4, print_settings[i]);
+    }
     usleep(50000);
 
 
     while (!kbhit()) {}
     input = getinput();
 
-    if (input == 5 || input == 3) {
+    if ((input == 5 || input == 3) && layer != 3) {
       layer++;
+      second[layer] = 0; // Initalize next menu to 0
     } else if (input == 4) {
-      break;
+      if (layer == 0) break;
+      layer--;
     } else { /* TODO: if 4? */
-      short int tmp = second+inc_sel[input];
-      if (tmp >= 0 && tmp <= 3) second += inc_sel[(input)];
+      short int tmp = second[layer]+inc_sel[input];
+      if (tmp >= 0 && tmp <= 3) second[layer] += inc_sel[(input)];
     }
 
     fputs("\033c\n\n", stdout); /* Clear Screen + Shift Down */

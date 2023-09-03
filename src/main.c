@@ -164,33 +164,43 @@ void render(int map[mapy][mapx]) {
 }
 
 /*** MENU ***/
-void slicemenu(int i, int menu, char print_item[20]) {
-  if (i == menu)
-    printf( "\x1b[1m>" "\t\t%s\n", print_item );
-  else
-    printf( "\x1b[0m" "\t\t%s\n", print_item );
-}
 void printmenu(int menu, int length, char print_item[length][20]) {
-  for (int i=0; i<4; i++) {
-    slicemenu(i, menu, print_item[i]);
+  for (int i=0; i<length; i++) {
+    if (i == menu)
+      printf( "\x1b[1m>" "\t\t%s\n", print_item[i] );
+    else
+      printf( "\x1b[0m" "\t\t%s\n", print_item[i] );
   }
 
-  fflush(stdout);
+  fflush(stdout); // Tell stdout to hurry up
   return;
 }
-void second_menu(int sel, char print_item[4][20]) {
-  int inc_sel[3] = {0, -1, 1};
-  char print_settings[4][20] = {
-    { "OPTION1\t" },
-    { "OPTION2\t" },
-    { "OPTION3\t" },
-    { "OPTION4\t" }
+void menudata(int menu, int second) {
+  /* This holds menudata, for submenus */
+  char print_yn[2][20] = {
+    { "NO"},
+    { "YES" }
   };
+  char print_settings[4][20] = {
+    { "option1\t" },
+    { "option2\t" },
+    { "option3\t" },
+    { "option4\t" }
+  };
+
+  if (menu == 1 || menu == 3)
+    printmenu(second, 2, print_yn);
+  else if (menu == 2)
+    printmenu(second, 4, print_settings);
+}
+int second_menu(int sel, char print_item[4][20]) {
+  int inc_sel[3] = {0, -1, 1};
   int input, second=0;
 
   while(1) {
     fputs("\n\n", stdout);
-    printmenu(second, 4, print_settings);
+    //printmenu(second, 4, print_settings);
+    menudata(sel, second);
     usleep(50000);
 
 
@@ -198,6 +208,10 @@ void second_menu(int sel, char print_item[4][20]) {
     input = getinput();
 
     if (input == 5 || input == 3) {
+	    if (sel == 3 || sel == 1) {
+		if (second == 1) return 1;
+		else return 0;
+	    }
     } else if (input == 4) {
       break;
     } else { /* TODO: if 4? */
@@ -205,11 +219,12 @@ void second_menu(int sel, char print_item[4][20]) {
       if (tmp >= 0 && tmp <= 3) second += inc_sel[(input)];
     }
 
+
     fputs("\033c\n\n", stdout); /* Clear Screen + Shift Down */
 
     printmenu(sel, 4, print_item);
   }
-  return;
+  return 0;
 }
 void menu() {
   int inc_sel[3] = {0, -1, 1};
@@ -221,7 +236,7 @@ void menu() {
       { "START\t" },
       { "SAVE\t" },
       { "SETTINGS" },
-      { "QUIT\t" }
+      { "RETURN\t" }
     };
     printmenu(sel, 4, print_item);
 
@@ -230,8 +245,10 @@ void menu() {
 
     if (input == 5 || input == 3) {
       if (sel == 0) break;
-      else if (sel == 3) exit_game();
-      else if (sel == 2 || sel == 1)
+      else if (sel == 3) {
+	      if (second_menu(sel, print_item))
+		      exit_game();
+      } else if (sel == 2 || sel == 1)
         second_menu(sel, print_item);
 
     } else { // Increment or Decrement selection on menu
@@ -418,7 +435,7 @@ void gameplay() {
   unsigned int player_resistance = 0; // Cannot be negative
   int input;
   fputs("\033c", stdout); // Clear screen
-  runlevel();
+  //runlevel(); // S
 
   int input_num = 0;
   do {

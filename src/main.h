@@ -55,7 +55,7 @@
 
 
 /* DEBUG */
-#define DEBUG_ENABLED true
+//#define DEBUG_ENABLED true
 #if DEBUG_ENABLED
 
 unsigned int frames=1; // Init variable for frames
