@@ -164,68 +164,84 @@ void render(int map[mapy][mapx]) {
 }
 
 /*** MENU ***/
-void printmenu(int select) {
-  fputs("\033c\n\n", stdout); /* Clear Screen + Shift Down */
-
-  char print_item[4][20] = {
-    { "START" },
-    { "SAVE" },
-    { "SETTINGS" },
-    { "QUIT" }
-  };
-
-  /*
-   * 19, and 4, is less than because arrays start a 0.
-   * This shifts the array over by five, so that we can prepend the
-   * "\x1b[1m>", this is faster than if select == on each, and printing the
-   * prepend first. This counts down from 19 to 4, so we dont over write the
-   * entire array with the first array point.
-   */
-  for (int j = 19; j > 4; j--)
-    print_item[select][j] = print_item[select][j-5];
-
-  /* TODO this is not very elagent */
-  print_item[select][0] = '\x1b';
-  print_item[select][1] = '[';
-  print_item[select][2] = '1';
-  print_item[select][3] = 'm';
-  print_item[select][4] = '>';
-
-  for (int i = 0; i < 4; i++)
-    printf( RESET "\t\t%s\n", print_item[i] );
-  fflush(stdout);
+void slicemenu(int i, int menu, char print_item[20]) {
+  if (i == menu)
+    printf( "\x1b[1m>" "\t\t%s\n", print_item );
+  else
+    printf( "\x1b[0m" "\t\t%s\n", print_item );
 }
-void menu() {
-  // Must not be negative, or arrays will segfault.
-  unsigned int sel=0, input;
+void printmenu(int menu, int length, char print_item[length][20]) {
+  for (int i=0; i<4; i++) {
+    slicemenu(i, menu, print_item[i]);
+  }
+
+  fflush(stdout);
+  return;
+}
+void second_menu(int sel, char print_item[4][20]) {
   int inc_sel[3] = {0, -1, 1};
+  char print_settings[4][20] = {
+    { "OPTION1\t" },
+    { "OPTION2\t" },
+    { "OPTION3\t" },
+    { "OPTION4\t" }
+  };
+  int input, second=0;
 
-  do {
-    printmenu(sel);
+  while(1) {
+    fputs("\n\n", stdout);
+    printmenu(second, 4, print_settings);
+    usleep(50000);
 
-    while (!kbhit()) { }
+
+    while (!kbhit()) {}
     input = getinput();
 
-    if (input == 0) { exit_game();
-    } else if (input == 5 || input == 3) {
-      BEEP_SELECT;
+    if (input == 5 || input == 3) {
+    } else if (input == 4) {
+      break;
+    } else { /* TODO: if 4? */
+      short int tmp = second+inc_sel[input];
+      if (tmp >= 0 && tmp <= 3) second += inc_sel[(input)];
+    }
 
+    fputs("\033c\n\n", stdout); /* Clear Screen + Shift Down */
+
+    printmenu(sel, 4, print_item);
+  }
+  return;
+}
+void menu() {
+  int inc_sel[3] = {0, -1, 1};
+  int sel = 0, input;
+
+  while (1) {
+    fputs("\033c\n\n", stdout); /* Clear Screen + Shift Down */
+    char print_item[4][20] = {
+      { "START\t" },
+      { "SAVE\t" },
+      { "SETTINGS" },
+      { "QUIT\t" }
+    };
+    printmenu(sel, 4, print_item);
+
+    while (!kbhit()) {}
+    input = getinput();
+
+    if (input == 5 || input == 3) {
       if (sel == 0) break;
-      //else if (sel == 1)
-      //else if (sel == 2)
       else if (sel == 3) exit_game();
-    } //else sel = 1; NOTE: Apparently this breaks everything
+      else if (sel == 2 || sel == 1)
+        second_menu(sel, print_item);
 
+    } else { // Increment or Decrement selection on menu
+      short int tmp = sel+inc_sel[input];
+      if (tmp >= 0 && tmp <= 3) sel += inc_sel[(input)];
+    }
 
-    /* Dont know why but putting these two together makes it seg-fault,
-     * unknown reason for it happening.
-     */
-    sel += inc_sel[(input)];
-    sel = sel % 4;
-
-    BEEP;
-    usleep(MENU_UPDATE_SPEED);
-  } while (true);
+    usleep(50000);
+  }
+  return;
 }
 
 
@@ -425,7 +441,7 @@ void gameplay() {
     } else {
       input_num = 0; // Set counter to zero
 
-      if (input == 5) menu();
+      if (input == 5) exit_game(); //menu();
       else if (input > 2) playerx+=inc_sel[input];
       else if (input <= 2) playery+=inc_sel[input];
     }
