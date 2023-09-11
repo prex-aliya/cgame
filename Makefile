@@ -4,6 +4,10 @@ VER			= 0.0.8
 #					| +--- MINOR, fatel bugs, etc.
 #					+----- MAJOR, updates, Minor features, etc.
 # Semantic Versioning: https://semver.org/
+# Numbering BASE64:
+# 	From 0-9, A-Z, a-z, +, /
+# Inspired by https://datatracker.ietf.org/doc/html/rfc4648#section-4
+#
 # v1.0.0 will be offical release.
 
 
@@ -47,6 +51,7 @@ test: compile
 	$(BIN) # Run The Binary
 compile: $(SRCD)
 	$(CC) $(CFLAGS) $(SRC) $(LIB) -o $(BIN) $(DEBUG)
+	@echo Finished Building $(NAME) v$(VER)
 install: all compile
 	@echo "No install option at the moment"
 uninstall: all compile
