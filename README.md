@@ -1,3 +1,5 @@
+<center><img src="preview.png" alt="PREVIEW"/></center>
+
 <h1 align="center" style="font-size:72px">cGAME</h1>
 
 __proper name will be given upon production of one__
