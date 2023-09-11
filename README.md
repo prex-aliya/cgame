@@ -5,4 +5,5 @@
 __proper name will be given upon production of one__
 
 This is a game, (game engine in the future.), that is made in c, and printed to
-the terminal, without ncurses library, or anything like that.
+the terminal, without ncurses library, or anything like that. Uses port audio
+for simple audio. Will add graphics in future.
