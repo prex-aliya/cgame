@@ -43,113 +43,99 @@ int kbhit() {
         return select(1, &fds, NULL, NULL, &tv) > 0;
 }
 
-void slicemenu(int i, int menu, char print_item[20]) {
-  if (i == menu)
-    printf( "\x1b[1m>" "\t\t%s\n", print_item );
-  else
-    printf( "\x1b[0m" "\t\t%s\n", print_item );
-}
-void printmenu(int menu, int length, char print_item[length][20]) {
-  for (int i=0; i<4; i++) {
-    slicemenu(i, menu, print_item[i]);
-  }
-
-  fflush(stdout);
-  fputs("\n\n", stdout);
-  return;
-}
-
-void second_menu(int sel, char print_item[4][20]) {
+//void menu() {
+//  int inc_sel[3] = {0, -1, 1};
+//  int sel = 0, input;
+//
+//  while (1) {
+//    fputs("\033c\n\n", stdout); /* Clear Screen + Shift Down */
+//    char print_item[4][20] = {
+//      { "START\t" },
+//      { "SAVE\t" },
+//      { "SETTINGS" },
+//      { "QUIT\t" }
+//    };
+//    printmenu(sel, 4, print_item);
+//
+//    while (!kbhit()) {}
+//    input = getinput();
+//
+//    if (input == 5 || input == 3) {
+//      if (sel == 0) break;
+//      else if (sel == 4) break;
+//      else
+//        second_menu(sel, print_item);
+//    } else {
+//      short int tmp = sel+inc_sel[input];
+//      if (tmp >= 0 && tmp <= 3) sel += inc_sel[(input)];
+//    }
+//
+//    usleep(50000);
+//  }
+//  return;
+//}
+void columnpp() {}
+void column() {}
+void data_input(int input, int sel) {
   int inc_sel[3] = {0, -1, 1};
-  char print_settings[4][4][20] = {
-    {
-      { "OPTION1\t" },
-      { "OPTION2\t" },
-      { "OPTION3\t" },
-      { "OPTION4\t" }
-    },
-    {
-      { "OPTION5\t" },
-      { "OPTION6\t" },
-      { "OPTION7\t" },
-      { "OPTION8\t" }
-    },
-    {
-      { "OPTION9\t" },
-      { "OPTION10\t" },
-      { "OPTION11\t" },
-      { "OPTION12\t" }
-    },
-    {
-      { "OPTION13\t" },
-      { "OPTION14\t" },
-      { "OPTION15\t" },
-      { "OPTION16\t" }
-    }};
-  int input, layer=0;
-  int second[4] = {0, 1};
 
-  while(1) {
-    fputs("\n\n", stdout);
-    for (int i=0; i<=layer; i++) {
-      if (i==layer) {
-        printmenu(second[i], 4, print_settings[I]);
-      } else
-        printmenu(second[i], 4, print_settings[i]);
-    }
-    usleep(50000);
-
-
-    while (!kbhit()) {}
-    input = getinput();
-
-    if ((input == 5 || input == 3) && layer != 3) {
-      layer++;
-      second[layer] = 0; // Initalize next menu to 0
-    } else if (input == 4) {
-      if (layer == 0) break;
-      layer--;
-    } else { /* TODO: if 4? */
-      short int tmp = second[layer]+inc_sel[input];
-      if (tmp >= 0 && tmp <= 3) second[layer] += inc_sel[(input)];
-    }
-
-    fputs("\033c\n\n", stdout); /* Clear Screen + Shift Down */
-
-    printmenu(sel, 4, print_item);
+  if (input == 5 || input == 3) {
+    return;
+  } else if (input == 1 || input == 2) {
+    short int tmp = sel+inc_sel[input];
+    if (tmp >= 0 && tmp <= 3) sel += inc_sel[(input)];
   }
-  return;
 }
 void menu() {
   int inc_sel[3] = {0, -1, 1};
-  int sel = 0, input;
+  int sel = 0, input, second = 0;
 
-  while (1) {
+  char print_item[4][20] = {
+    { "START\t" },
+    { "SAVE\t" },
+    { "SETTINGS" },
+    { "QUIT\t" }
+  };
+  char print_yn[2][20] = {
+    { "NO" },
+    { "YES" }
+  };
+
+  while(1) {
     fputs("\033c\n\n", stdout); /* Clear Screen + Shift Down */
-    char print_item[4][20] = {
-      { "START\t" },
-      { "SAVE\t" },
-      { "SETTINGS" },
-      { "QUIT\t" }
-    };
-    printmenu(sel, 4, print_item);
+
+    for (int i=0; i!=7; i++) {
+      // COLUMN 1
+      if (i < 4)
+        if (sel == i)
+          printf(">" "\t\t%s", print_item[i]);
+        else
+          printf("\t\t%s", print_item[i]);
+      else printf("\t\t\t");
+
+      // COLUMN 2
+      if (sel == 3 && i < 2+second)
+          printf("\t%s", print_yn[i-second]);
+      else if ((sel == 1 || sel == 2) && i < 5+second)
+          printf("\t%s", print_item[i-second]);
+      else printf("\t\t");
+
+      fputs("\n", stdout);
+    }
 
     while (!kbhit()) {}
     input = getinput();
 
     if (input == 5 || input == 3) {
-      if (sel == 0) break;
-      else if (sel == 4) break;
-      else
-        second_menu(sel, print_item);
-    } else {
+      return;
+    } else if (input == 1 || input == 2) {
       short int tmp = sel+inc_sel[input];
       if (tmp >= 0 && tmp <= 3) sel += inc_sel[(input)];
     }
 
+    fflush(stdout);
     usleep(50000);
   }
-  return;
 }
 
 int main() {

@@ -3,10 +3,10 @@
  ** \breif storage for macros, and arguments for main.c
  **
  ** This is a blood mess of a header file, has all includes as well. Also where
- ** the length debug macros live, designed to be removable from the code, to not
+ ** the lengthy debug macros live, designed to be removable from the code, to not
  ** impact performance at all. Usally this is where the ugly part of making
  ** things fast are, or functions I have no Idea how they work, and will learn
- ** some day, maybe.
+ ** some day, maybe, live.
  **/
 
 #include <signal.h>
@@ -42,7 +42,7 @@
 #define RESET    "\x1b[0m"
 
 
-/* LOG */
+/* LOGGING */
 #define LOG_FILE "cgame.log"
 
 /* BOARDER PRINT */
@@ -55,7 +55,7 @@
 
 
 /* DEBUG */
-//#define DEBUG_ENABLED true
+#define DEBUG_ENABLED false
 #if DEBUG_ENABLED
 
 unsigned int frames=1; // Init variable for frames
@@ -64,7 +64,6 @@ unsigned int frames=1; // Init variable for frames
 #else
 #define FRAMES_INCREMENT
 #endif
-
 
 
 /* AUDIO */
@@ -80,6 +79,7 @@ unsigned int frames=1; // Init variable for frames
 
 bool playermove=true;
 bool playerview=true;
+bool drove=true;
 
 // TODO MOVE TO CONFIG.h
 unsigned short int level=0; // No negative levels.

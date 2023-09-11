@@ -93,7 +93,7 @@ void second_menu(int sel, char print_item[4][20]) {
     fputs("\n\n", stdout);
     for (int i=0; i<=layer; i++) {
       if (i==layer) {
-        printmenu(second[i], 4, print_settings[i]);
+        printmenu(second[i], 4, print_settings[I]);
       } else
         printmenu(second[i], 4, print_settings[i]);
     }

@@ -11,6 +11,7 @@
 #include "main.h"
 
 
+/* {{{ BACKEND */
 /*** EXIT ***/
 struct termios old_tio, new_tio;
 int sig_caught=0;
@@ -20,11 +21,51 @@ void signal_handler(int sig) {
   }
 }
 void exit_game() {
-  tcsetattr(STDIN_FILENO, TCSANOW, &old_tio); /* restore former settings */
-  printf("\x1b[0m");
+  tcsetattr(STDIN_FILENO, TCSANOW, &old_tio); /* Restore Former Settings */
+  printf("\x1b[0m"); /* Reset Formatting */
   exit(0);
 }
 
+/*** LOGGING ***/
+bool log_s() { /* Restart Log */
+  FILE* file = fopen(LOG_FILE, "w");
+  if (!file) {
+    fprintf(stderr, "ERROR: could not open LOG_FILE log file %s for writting",
+            LOG_FILE);
+    return false;
+  }
+  time_t now = time(NULL);
+  char* date = ctime(&now);
+  fprintf(file, "LOG_FILE log. local time %s\n", date);
+  fclose(file);
+  return true;
+}
+bool log_a(const char* message, ...) { /* Append/Add to Log */
+  va_list argptr;
+  FILE* file = fopen(LOG_FILE, "a");
+  if (!file) {
+    fprintf(stderr, "ERROR: could not open LOG_FILE log file %s for writting",
+            LOG_FILE);
+    return false;
+  }
+  /*  */
+  va_start(argptr, message);
+  vfprintf(file, message, argptr);
+  va_end(argptr);
+
+  fclose(file);
+  return true;
+}
+bool log_e(const char* message, ...) { /* Error Log */
+  va_list argptr;
+  if (log_a(message)) {
+    va_start(argptr, message);
+    vfprintf(stderr, message, argptr);
+    va_end(argptr);
+    return true;
+  }
+  return false;
+}
 /*** INPUT/DEBUG ***/
 short int getinput() {
     /* NOTE:
@@ -56,6 +97,8 @@ short int getinput() {
 
     return 0;
 }
+/* }}} */
+
 
 /*** RENDER ***/
 void td_lvl_mtn(int x, int y) {
@@ -162,7 +205,6 @@ void render(int map[mapy][mapx]) {
 
   fputs("\n", stdout);
 }
-
 /*** MENU ***/
 void printmenu(int menu, int length, char print_item[length][20]) {
   for (int i=0; i<length; i++) {
@@ -177,23 +219,29 @@ void printmenu(int menu, int length, char print_item[length][20]) {
 }
 void menudata(int menu, int second) {
   /* This holds menudata, for submenus */
-  char print_yn[2][20] = {
+  char print_gt[2][20] = { /* GAME TYPE*/
     { "NO"},
     { "YES" }
   };
-  char print_settings[4][20] = {
+  char print_yn[2][20] = { /* YES/NO */
+    { "NO"},
+    { "YES" }
+  };
+  char print_s[4][20] = { /* SETTINGS */
     { "option1\t" },
     { "option2\t" },
     { "option3\t" },
     { "option4\t" }
   };
 
-  if (menu == 1 || menu == 3)
+  if (menu == 0)
+    printmenu(second, 2, print_gt);
+  else if (menu == 1 || menu == 3)
     printmenu(second, 2, print_yn);
   else if (menu == 2)
-    printmenu(second, 4, print_settings);
+    printmenu(second, 4, print_s);
 }
-int second_menu(int sel, char print_item[4][20]) {
+int  second_menu(int sel, char print_item[4][20]) {
   int inc_sel[3] = {0, -1, 1};
   int input, second=0;
 
@@ -208,10 +256,10 @@ int second_menu(int sel, char print_item[4][20]) {
     input = getinput();
 
     if (input == 5 || input == 3) {
-	    if (sel == 3 || sel == 1) {
-		if (second == 1) return 1;
-		else return 0;
-	    }
+      if (sel == 3 || sel == 1) {
+        if (second == 1) return 1;
+        else return 0;
+      }
     } else if (input == 4) {
       break;
     } else { /* TODO: if 4? */
@@ -226,42 +274,9 @@ int second_menu(int sel, char print_item[4][20]) {
   }
   return 0;
 }
-void menu() {
-  int inc_sel[3] = {0, -1, 1};
-  int sel = 0, input;
-
-  while (1) {
-    fputs("\033c\n\n", stdout); /* Clear Screen + Shift Down */
-    char print_item[4][20] = {
-      { "START\t" },
-      { "SAVE\t" },
-      { "SETTINGS" },
-      { "RETURN\t" }
-    };
-    printmenu(sel, 4, print_item);
-
-    while (!kbhit()) {}
-    input = getinput();
-
-    if (input == 5 || input == 3) {
-      if (sel == 0) break;
-      else if (sel == 3) {
-	      if (second_menu(sel, print_item))
-		      exit_game();
-      } else if (sel == 2 || sel == 1)
-        second_menu(sel, print_item);
-
-    } else { // Increment or Decrement selection on menu
-      short int tmp = sel+inc_sel[input];
-      if (tmp >= 0 && tmp <= 3) sel += inc_sel[(input)];
-    }
-
-    usleep(50000);
-  }
-  return;
-}
 
 
+/* {{{ LOW GAME */
 /*** GAMEDATA ***/
 void level2() {
     exit_game();
@@ -272,7 +287,7 @@ void level1() {
     {2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2},
     {2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2},
     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    {1,1,1,1,1,1,3,3,3,1,1,1,1,1,1,1,1,1,1},
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
     {0,0,0,0,0,4,4,4,4,4,4,4,4,4,0,0,0,0,0},
@@ -289,6 +304,12 @@ void level1() {
     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1}
   };
 
+  if (drove) {
+    map[4][6] = 3;
+    map[4][7] = 3;
+    map[4][8] = 3;
+  }
+
   mapx = mapy = 19;
 
   if (playerx == 9 && playery == 12) {
@@ -301,8 +322,23 @@ void level1() {
 
   render(map);
 }
-void level0_cc(int map[10][20]) {
-//void level0_wc() {} // TODO: cutscene for walking down the road
+void level0_wc() { // Walking Cutscenes
+  mapx=mapy=16;
+  playery++;
+  level++;
+  drove=false;
+
+  level1();
+
+  for (int i=-4; i!=8; i++) {
+    fputs("\033c", stdout); /*CLEAR*/
+    playerx = i;
+    usleep(200000+(i*20000)); // Slow down, as comming in.
+    level1();
+  }
+// TODO: cutscene for walking down the roadk
+}
+void level0_cc(int map[10][20]) { // Car Cutscene
   // Move car forward 1
   map[2][7]  = 0;
   map[2][10] = 3;
@@ -324,7 +360,7 @@ void level0_cc(int map[10][20]) {
     map[3][i+2] = 3;
 
     usleep(2000); /* sleep in microseconds */
-    fputs("\033c", stdout);
+    fputs("\033c", stdout); /*CLEAR*/
     render(map);
 
     usleep(500000);
@@ -397,19 +433,18 @@ void level0() {
   };
 
   if (playerx == 8 && playery == 3) {
+    log_a("LOW_GAME: Level0, starting drive\n");
     BEEPL(2);
     playermove = playerview = false;
     level0_cc(map);
-  } else if (playerx >= 1023) {
+  } else if (playerx >= 1024) {
     /* If follow road long enough, start next level */
+    log_a("LOW_GAME: Level0, starting walk\n");
     BEEPL(3);
-    playermove = playerview = false;
-    playerx = 8; playery = 3;
-    level1();
+    level0_wc();
   } else
     render(map);
 }
-
 /*** GAMEPLAY ***/
 void runlevel() {
   fputs("\033c", stdout);
@@ -422,7 +457,7 @@ void runlevel() {
   default: exit_game();
   }
 }
-void gameplay() {
+void low_game() {
   /*
    * This function is the main gameplay loop, we have an array that has if the
    * player should increase location by -1, or 1, or none, for a constant look
@@ -431,13 +466,15 @@ void gameplay() {
    * nothing, except render the screen. If we do not render the screen, it
    * will become glitchy, try yourself, may be fixed, and I didn't know.
    */
+  log_a("LOW_GAME: INITILIZED\n");
+
   const unsigned int inc_sel[6] = {0, -1, 1, 1, -1, 0};
   unsigned int player_resistance = 0; // Cannot be negative
-  int input;
+  int input, input_num = 0;
   fputs("\033c", stdout); // Clear screen
-  //runlevel(); // S
+  runlevel();
 
-  int input_num = 0;
+  //int __loop__ = 0;
   do {
     /* Resistance, this is how many time it is need to typed in a row for it
      * to register as an input. We consume a spacific ammount of inputs. */
@@ -446,7 +483,6 @@ void gameplay() {
       player_resistance = 2; // Little resistance
     else
       player_resistance = 0; // No resistance
-
 
     // TODO remove need for counter.
     /* if input_num is >= to resistance then, get the input, else, 0 */
@@ -463,8 +499,6 @@ void gameplay() {
       else if (input <= 2) playery+=inc_sel[input];
     }
 
-
-    //int i = 0; TODO: add limit
     while (!kbhit()) { /* While no new inputs */
       runlevel();
       usleep(GAME_UPDATE_SPEED); /* Sleep in microseconds */
@@ -473,32 +507,74 @@ void gameplay() {
 
   } while (1);
 }
+/* }}} */
 
 /*** MAIN ***/
-int main() {
-    /* TODO: include ammount of times for beep */
-    BEEP BEEP BEEP;
+int  menu() {
+  log_a("MENU: Start Menu\n");
+  int inc_sel[3] = {0, -1, 1};
+  int sel = 0, input;
 
-    /* Change Termios Settings/store settings. Mainly Magic */
-    tcgetattr(STDIN_FILENO, &old_tio);
-    new_tio = old_tio;
-    new_tio.c_lflag &= (~ICANON & ~ECHO);
-    tcsetattr(STDIN_FILENO, TCSANOW, &new_tio);
+  while (1) {
+    fputs("\033c\n\n", stdout); /* Clear Screen + Shift Down */
+    char print_item[4][20] = {
+      { "START\t" },
+      { "SAVE\t" },
+      { "SETTINGS" },
+      { "RETURN\t" }
+    };
+    printmenu(sel, 4, print_item);
 
-    menu();
-    gameplay();
+    while (!kbhit()) {}
+    input = getinput();
+    while (kbhit()) fgetc(stdin);
+    BEEP;
 
-    /* EXIT */
-    exit_game();
+    if (input == 5 || input == 3) {
+      if (sel == 0) {
+        low_game();
+        return 0;
+      } else if (sel == 3) {
+        if (second_menu(sel, print_item))
+          return 1;
+      } else if (sel == 2 || sel == 1)
+        second_menu(sel, print_item);
+
+    } else { // Increment or Decrement selection on menu
+      short int tmp = sel+inc_sel[input];
+      if (tmp >= 0 && tmp <= 3) sel += inc_sel[(input)];
+    }
+
+    usleep(50000);
+  }
+  return 0;
+}
+int  main() {
+  /* TODO: include ammount of times for beep */
+  BEEP BEEP BEEP;
+
+  log_s();
+
+  /* Change Termios Settings/store settings. Mainly Magic */
+  tcgetattr(STDIN_FILENO, &old_tio);
+  new_tio = old_tio;
+  new_tio.c_lflag &= (~ICANON & ~ECHO);
+  tcsetattr(STDIN_FILENO, TCSANOW, &new_tio);
+
+  int __limit__ = 0;
+  while (__limit__++ < 2) {
+    if (menu()) break;
+    log_a("MENU: exited, limit %d/128\n", __limit__);
+  }
+
+  /* EXIT */
+  exit_game();
 }
 
-/* TODO: MULTITREADING
+/*
+ * TODO: MULTITREADING
  *  ` First with Audio, to do in background for fast gameplay + sound
  *   https://dev.to/quantumsheep/basics-of-multithreading-in-c-4pam
  * TODO: move actual config values to config.h
- * TODO: menu settings?
- *
- * >SETTINGS \t SOMETHING ONE
- * QUIT      \t SOMETHING 2
- *       \t\t\t SOMETHING 3
  */
+// vim: foldmethod=syntax
