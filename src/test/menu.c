@@ -43,99 +43,139 @@ int kbhit() {
         return select(1, &fds, NULL, NULL, &tv) > 0;
 }
 
-//void menu() {
-//  int inc_sel[3] = {0, -1, 1};
-//  int sel = 0, input;
-//
-//  while (1) {
-//    fputs("\033c\n\n", stdout); /* Clear Screen + Shift Down */
-//    char print_item[4][20] = {
-//      { "START\t" },
-//      { "SAVE\t" },
-//      { "SETTINGS" },
-//      { "QUIT\t" }
-//    };
-//    printmenu(sel, 4, print_item);
-//
-//    while (!kbhit()) {}
-//    input = getinput();
-//
-//    if (input == 5 || input == 3) {
-//      if (sel == 0) break;
-//      else if (sel == 4) break;
-//      else
-//        second_menu(sel, print_item);
-//    } else {
-//      short int tmp = sel+inc_sel[input];
-//      if (tmp >= 0 && tmp <= 3) sel += inc_sel[(input)];
-//    }
-//
-//    usleep(50000);
-//  }
-//  return;
-//}
-void columnpp() {}
-void column() {}
-void data_input(int input, int sel) {
-  int inc_sel[3] = {0, -1, 1};
 
-  if (input == 5 || input == 3) {
-    return;
-  } else if (input == 1 || input == 2) {
-    short int tmp = sel+inc_sel[input];
-    if (tmp >= 0 && tmp <= 3) sel += inc_sel[(input)];
+int menu_print(int *sel, int len, char print_item[len][20]) {
+  //printf("\033[0;0HHello\n");
+  fputs("\n\n", stdout); /* Shift Down */
+  for (int i=0; i!=len; i++) {
+
+    if (i < len)
+      if (*sel == i) {
+        printf("\x1b[1m>" "\t\t%s\n", print_item[i]);
+        fputs("\x1b[0m", stdout);
+      } else
+        printf(" \t\t%s\n", print_item[i]);
   }
 }
-void menu() {
-  int inc_sel[3] = {0, -1, 1};
-  int sel = 0, input, second = 0;
-
-  char print_item[4][20] = {
-    { "START\t" },
-    { "SAVE\t" },
-    { "SETTINGS" },
-    { "QUIT\t" }
+void menu_data(int sel[2], int *i, int *menu_length) {
+  char print_o[5][20] = {
+    { "option1" },
+    { "option2" },
+    { "option3" },
+    { "option4" },
+    { "option5" }
   };
+  char print_yn[2][20] = {
+    { "YES" },
+    { "NO" }
+  };
+  char print_item[4][20] = {
+    { "START" },
+    { "SAVE" },
+    { "SETTINGS" },
+    { "QUIT" }
+  };
+
+  if (*i == 0) {
+    menu_print(&sel[*i], 4, print_item);
+    *menu_length = 4;
+  } else if (*&sel[0] == 1 && *i == 1) {
+    menu_print(&sel[*i], 5, print_o);
+    *menu_length = 5;
+  } else {
+    menu_print(&sel[*i], 2, print_yn);
+    *menu_length = 2;
+  }
+}
+int menu_yn() {
+  unsigned int ret_val[2] = {0, 1};
+  unsigned int sel = 0;
+  unsigned int input;
   char print_yn[2][20] = {
     { "NO" },
     { "YES" }
   };
 
-  while(1) {
-    fputs("\033c\n\n", stdout); /* Clear Screen + Shift Down */
 
-    for (int i=0; i!=7; i++) {
-      // COLUMN 1
-      if (i < 4)
-        if (sel == i)
-          printf(">" "\t\t%s", print_item[i]);
-        else
-          printf("\t\t%s", print_item[i]);
-      else printf("\t\t\t");
+  while (1) {
+    menu_print(&sel, 2, print_yn);
+    printf("\x1b[4A");
 
-      // COLUMN 2
-      if (sel == 3 && i < 2+second)
-          printf("\t%s", print_yn[i-second]);
-      else if ((sel == 1 || sel == 2) && i < 5+second)
-          printf("\t%s", print_item[i-second]);
-      else printf("\t\t");
-
-      fputs("\n", stdout);
-    }
-
-    while (!kbhit()) {}
+    while (kbhit()) fgetc(stdin);
     input = getinput();
 
-    if (input == 5 || input == 3) {
-      return;
-    } else if (input == 1 || input == 2) {
-      short int tmp = sel+inc_sel[input];
-      if (tmp >= 0 && tmp <= 3) sel += inc_sel[(input)];
+    if (input == 3 || input == 5) {
+      printf("\x1b[4B");
+      return ret_val[sel];
+    } else {
+      sel = (sel == 1) ? 0 : 1;
     }
 
-    fflush(stdout);
-    usleep(50000);
+    usleep(100000);
   }
+
+  printf("\x1b[A2");
+
+}
+int menu_input(int *input, int *sel, int *cur_sel, int *m_len) {
+  int inc_sel[3] = {0, -1, 1};
+  while (!kbhit()) {}
+  *input = getinput();
+  while (kbhit()) fgetc(stdin);
+
+  if (*input == 5 || *input == 3) {
+    //*cur_sel += 1;
+
+    if (*cur_sel == 0) {
+      switch (*sel) {
+        case 0: *cur_sel+=1; break;
+        case 1: *cur_sel+=1; break;
+        case 2: break;
+        case 3: if (*cur_sel==0) if (menu_yn()) return 1;
+          else *cur_sel-=1;
+          break;
+      }
+    } else if (1) {
+      switch (*sel) {
+        case 0: *cur_sel+=1; break;
+        case 1: if (*cur_sel==0) return 1;
+                  else *cur_sel-=1;
+                  break;
+      }
+    } else return 1;
+
+  } else if (*input == 4) {
+      *cur_sel-=1;
+  } else if (*input == 1 || *input == 2) {
+    short int tmp = *sel+inc_sel[*input];
+    if (tmp >= 0 && tmp < *m_len) *sel += inc_sel[*input];
+  }
+
+  return 0;
+}
+
+void menu() {
+  int input,cur_sel = 0;
+  int menu_length = 4;
+  int sel[2] = {0,0};
+
+  while (1) { // TODO not finite
+    // PRINT
+    fputs("\033c", stdout); /* Clear Screen + Shift Down */
+    for (int i=0; i<=cur_sel; i++)
+      menu_data(sel, &i, &menu_length);
+      //menu_print(&sel[i]);
+
+    usleep(100000);
+
+    // INPUT
+    if (menu_input(&input, &sel[cur_sel], &cur_sel, &menu_length))
+      return;
+    if (cur_sel > 1)
+      cur_sel = 1;
+  }
+
+  return;
 }
 
 int main() {
