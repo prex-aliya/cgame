@@ -10,13 +10,14 @@
  **/
 
 #include <signal.h>
-#include <stdio.h>
-#include <time.h>
 #include <stdarg.h>
 #include <stdbool.h>
+#include <stdio.h>
 #include <stdlib.h> // For NULL
 #include <termios.h>
+#include <time.h>
 #include <unistd.h>
+#include "config.h"
 #include "sound.c"
 
 
@@ -41,21 +42,13 @@
 
 #define RESET    "\x1b[0m"
 
-
-/* LOGGING */
-#define LOG_FILE "cgame.log"
-
 /* BOARDER PRINT */
 #define BOARDER_CHAR "                                                                                                                            "
 #define PTOP printf(BWHITE BOARDER_CHAR RESET); \
     fputs("\n", stdout);
 
-/* MENU */
-#define MENU_LENGTH 4
-
 
 /* DEBUG */
-#define DEBUG_ENABLED false
 #if DEBUG_ENABLED
 
 unsigned int frames=1; // Init variable for frames
@@ -67,8 +60,6 @@ unsigned int frames=1; // Init variable for frames
 
 
 /* AUDIO */
-#define NORMAL_SAMPLE_LENGTH 44500
-#define HIGH_SAMPLE_LENGTH 46000
 #define BEEP default_sine();
 #define BEEP_SELECT sine(100, HIGH_SAMPLE_LENGTH);
 #define BEEPL(len) sine((len)*100, NORMAL_SAMPLE_LENGTH);
@@ -80,9 +71,6 @@ unsigned int frames=1; // Init variable for frames
 bool playermove=true;
 bool playerview=true;
 bool drove=true;
-
-// TODO MOVE TO CONFIG.h
-unsigned short int level=0; // No negative levels.
 
 /* These cannot be negative, since they are in for loops. */
 const unsigned int height=7; // TODO: make this be able to move

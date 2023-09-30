@@ -101,6 +101,10 @@ short int getinput() {
 
 
 /*** RENDER ***/
+// TODO: Redo rendering pipline
+void ct_ren() {
+
+}
 void td_lvl_mtn(int x, int y) {
 #define TD_MTN_OUT_VAR int outy = (y/4)+(playery-7);  \
   int outx = x+(playerx-7)
@@ -177,11 +181,15 @@ void render(int map[mapy][mapx]) {
 
   PTOP;
 
-  for (y=0; y<4*height; y++) {
+  for (y=0; y<4*height; y++) { // Wastfull, precalculate 4*height
     printf(BWHITE "  " RESET); /* PRINT white boarder */
     for (x=0; x<width; x++) {
 
-      td_ren(x,y,map);
+      if (level != 3)
+        td_ren(x,y,map); // Top Down RENderer
+      else
+        ct_ren();        // CiTy RENderer
+
 
     }
     printf(BWHITE "  \n" RESET);
@@ -276,7 +284,7 @@ int  second_menu(int sel, char print_item[4][20]) {
 }
 
 
-/* {{{ LOW GAME */
+/* {{{ GAME */
 /*** GAMEDATA ***/
 void level2() {
     exit_game();
@@ -561,11 +569,11 @@ int  main() {
   new_tio.c_lflag &= (~ICANON & ~ECHO);
   tcsetattr(STDIN_FILENO, TCSANOW, &new_tio);
 
-  int __limit__ = 0;
-  while (__limit__++ < 2) {
-    if (menu()) break;
-    log_a("MENU: exited, limit %d/128\n", __limit__);
-  }
+  menu();
+  //int __limit__ = 0;
+  //  if (menu()) break;
+  //  log_a("MENU: exited, limit %d/128\n", __limit__);
+  //}
 
   /* EXIT */
   exit_game();
