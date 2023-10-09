@@ -20,6 +20,9 @@
 #include "config.h"
 #include "sound.c"
 
+/* Flags */
+#define playermove_t
+#define playermove_f
 
 /* COLORS */
 #define BLACK    "\x1b[30m"
@@ -71,6 +74,13 @@ unsigned int frames=1; // Init variable for frames
 bool playermove=true;
 bool playerview=true;
 bool drove=true;
+
+unsigned int flags = 1;
+//0b00000001;
+//  ^     ^^
+//  |     |`player move
+//  |     `player view
+//  `did player drive
 
 /* These cannot be negative, since they are in for loops. */
 const unsigned int height=7; // TODO: make this be able to move

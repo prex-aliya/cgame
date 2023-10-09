@@ -206,9 +206,10 @@ void render(int map[mapy][mapx]) {
 
 #if (DEBUG_ENABLED)
   printf("\n(%d, %d)",playerx, playery);
-  printf("\npmove: %d, pview: %d",playermove, playerview);
+  //printf("\npmove: %d, pview: %d",playermove, playerview);
+  printf("flags: %d", flags);
   printf("\nxmap: %d, ymap: %d",mapx, mapy);
-  printf("\nframes: %d, level: %d",frames, level+1);
+  printf("\nframes: %d, level: %d",frames, level+2);
 #endif
 
   fputs("\n", stdout);

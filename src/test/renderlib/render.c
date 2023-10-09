@@ -1,84 +1,102 @@
 #include "render.h"
+#include <unistd.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
-#define H 7
-#define W 15
-#define S H*W
+#define RESET    "\x1b[0;0m"
 
+#define H 26    // Heigth
+#define W 80    // Width
+#define S H*W   // Size for Total Pixels
+
+
+// https://stackoverflow.com/questions/9571738/picking-random-number-between-two-points-in-c
+int rang_rad(int min, int max) {
+  int diff = max-min;
+  return (int) (((double)(diff+1)/RAND_MAX) * rand() + min);
+}
+static void reset(void) {
+  printf(RESET "\x1b[1;1H");
+}
 
 static void render(const unsigned char *buf) { // Printing out buffer
-  // TODO: choose methods of rendering.
+                                               // TODO: choose methods of rendering.
+  reset();
+  int num = 0;
   for (int y=0; y<H; y++) {
-    for (int n=0; n<3; n++) { // Replicating x 3 times down
-      for (int x=0; x<W; x++) {
-        printf("%c", buf[x+(W*y)]);
-        printf("%c", buf[x+(W*y)]);
-        printf("%c", buf[x+(W*y)]);
-        printf("%c", buf[x+(W*y)]);
-      }
-      printf("\n");
+    for (int x=0; x<W; num++, x++) {
+      printf("\x1b[48;5;%dm ", buf[num]);
     }
+    printf(RESET);
+    for (int x=1; x<23; x++) {
+            printf("%c", buf[S+(y*22)+x]);
+    }
+    printf(RESET "\n");
   }
+  printf(RESET);
 }
 
 
-static void td_mount() {
+void border(unsigned char *buf) {
+    memset(buf+S, 126, 22);             // Sets top border
+    memset(buf+S+(22*(H-1)), 126, 22);  // bottom border
+    buf[S+22] = 92;     // top right corner
+    buf[S+(22*H)] = 47; // bottom right corner
+    for (int x=S+(22*2); x<S+(22*H); x+=22)
+      buf[x] = 124;     // right side border
+}
+static void td_mount(void) {
   printf("Mountian");
 }
-int td_ren() { // (t)op (d)own (ren)der
-  printf("I am top down render");
-  td_mount();
+int td_ren(void) { // (t)op (d)own (ren)der
+  static unsigned char buf[S+(22*H)];
+  memset(buf, 33, S);
 
-  return 0;
-}
-
-static void dm_building(unsigned int num, unsigned char *buf) {
-  /* There are for loops that take a number and changes the buf[] to a specified
-   * number, */
-  if (num < 7) {
-    for (int i=num+(num*W); i<S; i+=W)
-      buf[i] = 35;
-
-    /* This takes num and adds num multiplied by W, or width of screen, num is
-     * used to shift over to desired column, and (num*W), is used to shift down
-     * by how much we are from starting edge.
-     */
-  } else if (num == 7)
-    for (int i=num; i<S; i+=W)
-      buf[i] = 35;
-  else {
-    for (int i=num+(W*(14-num)); i<S; i+=W)
-      buf[i] = 35;
-
-    /* This is for the flip side of the buildings.
-     * Takes the number, shift from 0 to column wanted, then (W*(14-num)) takes
-     * num and finds the difference to find how far it is from the edge, then
-     * multiply it by W, width of screen, to shift entire building down, by
-     * specified number
-     */
-  }
-}
-int dm_ren() { // (d)oo(m) (ren)der
-  static unsigned char buf[S];
-  memset(buf, 32, sizeof(buf));
-
-  //for (int i=0; i<S; i+=2)
-  //  buf[i] = 67;
-
-  //for (int i=0; i<S; i+=W) // First Closest Building
-    //buf[i] = 35;
-
-  dm_building(0, buf);
-  dm_building(1, buf);
-  dm_building(4, buf);
-  dm_building(5, buf);
-  dm_building(8, buf);
-  dm_building(9, buf);
-  dm_building(12, buf);
-  dm_building(13, buf);
-  dm_building(14, buf);
+  
 
   render(buf);
+  reset();
   return 0;
 }
+int dm_ren(void) { // (d)oo(m) (ren)der
+  static unsigned char buf[S+(22*H)];
+  memset(buf, 33, sizeof(buf));
+
+
+
+  render(buf);
+  reset();
+  return 0;
+}
+int ld_ren(int length) { // (l)oa(d)ing screen (ren)derer
+  static unsigned char buf[S+(22*H)];
+  int shift = W*2; // Ammount status line shifts to move two line down
+
+  length = length*10;
+  for (int i=0; i < length; i++) {
+    int seed = time(NULL)+i;
+    srand(seed);
+
+    for (int x=0; x<S; x++)
+      buf[x] = rang_rad(1,256);
+    for (int x=S+22; x<S+(22*H)+1; x++)
+      buf[x] = rang_rad(32,123);
+
+    unsigned char color;
+    if (rang_rad(1,2) == 1)
+      color = 255;
+    else
+      color = 0;
+    memset(buf+shift, color, i/4);
+
+    border(buf);
+
+    render(buf);
+    usleep(100000);
+  }
+}
+
+/* vim: shiftwidth=2 tabstop=2 foldmethod=syntax
+ */
