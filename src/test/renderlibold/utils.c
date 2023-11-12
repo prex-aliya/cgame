@@ -1,6 +1,5 @@
-#include <stdbool.h>
 #include <stdarg.h>
-#include <signal.h>
+#include <stdbool.h>
 
 #define LOG_FILE "log"
 

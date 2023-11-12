@@ -1,6 +1,6 @@
-#ifndef RENDER_H_
-#define RENDER_H_
+#include <stdio.h>
+#include <string.h>
 
-
-
-#endif // RENDER_H_
+#define H 7*4   // Height
+#define W 15*4  // Width
+#define S W*H   // AREA

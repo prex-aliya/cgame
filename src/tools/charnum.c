@@ -20,6 +20,6 @@ int main() {
   while (1) {
     c = getch();
     cr = c;
-    printf("%c %d", c, cr);
+    printf("%c - %d", c, cr);
   }
 }
